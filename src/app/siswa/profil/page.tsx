@@ -10,6 +10,7 @@ import {
   Calendar,
   Edit,
   ArrowLeft,
+  LogOut,
 } from "lucide-react";
 import DashboardLayout from "@/components/ui/DashboardLayout";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
@@ -153,6 +154,11 @@ export default function ProfilSiswaPage() {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    router.push("/login");
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -196,7 +202,7 @@ export default function ProfilSiswaPage() {
   return (
     <DashboardLayout userRole="siswa">
       {/* Header */}
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6">
         <div className="flex items-center">
           <Button
             onClick={() => router.push("/siswa/dashboard")}
@@ -212,10 +218,6 @@ export default function ProfilSiswaPage() {
             <p className="text-gray-600">Informasi data diri dan akademik</p>
           </div>
         </div>
-        <Button variant="primary" size="sm" href="/siswa/profil/edit">
-          <Edit className="h-4 w-4 mr-2" />
-          Ubah Password
-        </Button>
       </div>
 
       {/* Profile Cards */}
@@ -323,6 +325,28 @@ export default function ProfilSiswaPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Action Buttons */}
+      <div className="mt-6 flex flex-col sm:flex-row gap-4">
+        <Button 
+          variant="primary" 
+          size="sm" 
+          href="/siswa/profil/edit"
+          className="flex-1 sm:flex-none"
+        >
+          <Edit className="h-4 w-4 mr-2" />
+          Ubah Password
+        </Button>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={handleLogout}
+          className="flex-1 sm:flex-none text-red-600 border-red-300 hover:bg-red-50 hover:border-red-400"
+        >
+          <LogOut className="h-4 w-4 mr-2" />
+          Logout
+        </Button>
+      </div>
     </DashboardLayout>
   );
 }
