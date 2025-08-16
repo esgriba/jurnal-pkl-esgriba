@@ -1,0 +1,227 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import {
+  Home,
+  BookOpen,
+  Users,
+  FileText,
+  Settings,
+  Calendar,
+  Building,
+  UserCheck,
+  BarChart3,
+  User,
+  Clock,
+  CheckSquare,
+} from "lucide-react";
+
+interface MobileBottomNavProps {
+  userRole: string;
+}
+
+interface NavItem {
+  id: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  href: string;
+  badge?: number;
+}
+
+export default function MobileBottomNav({ userRole }: MobileBottomNavProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check if device is mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      const userAgent = navigator.userAgent.toLowerCase();
+      const isMobileDevice =
+        /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/.test(
+          userAgent
+        ) || window.innerWidth <= 768;
+      setIsMobile(isMobileDevice);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  // Define navigation items based on user role
+  const getNavItems = (): NavItem[] => {
+    switch (userRole) {
+      case "admin":
+        return [
+          {
+            id: "dashboard",
+            label: "Dashboard",
+            icon: Home,
+            href: "/admin/dashboard",
+          },
+          {
+            id: "absensi",
+            label: "Absensi",
+            icon: CheckSquare,
+            href: "/admin/absensi",
+          },
+          {
+            id: "siswa",
+            label: "Siswa",
+            icon: Users,
+            href: "/admin/siswa",
+          },
+          {
+            id: "jurnal",
+            label: "Jurnal",
+            icon: FileText,
+            href: "/admin/jurnal",
+          },
+          {
+            id: "more",
+            label: "Lainnya",
+            icon: Settings,
+            href: "/admin/users",
+          },
+        ];
+
+      case "guru":
+        return [
+          {
+            id: "dashboard",
+            label: "Dashboard",
+            icon: Home,
+            href: "/guru/dashboard",
+          },
+          {
+            id: "siswa",
+            label: "Siswa",
+            icon: Users,
+            href: "/guru/siswa",
+          },
+          {
+            id: "jurnal",
+            label: "Jurnal",
+            icon: FileText,
+            href: "/guru/jurnal",
+          },
+          {
+            id: "profile",
+            label: "Profil",
+            icon: User,
+            href: "/guru/profile",
+          },
+        ];
+
+      case "siswa":
+        return [
+          {
+            id: "dashboard",
+            label: "Dashboard",
+            icon: Home,
+            href: "/siswa/dashboard",
+          },
+          {
+            id: "absensi",
+            label: "Absensi",
+            icon: Clock,
+            href: "/siswa/absensi",
+          },
+          {
+            id: "jurnal",
+            label: "Jurnal",
+            icon: BookOpen,
+            href: "/siswa/jurnal",
+          },
+          {
+            id: "profil",
+            label: "Profil",
+            icon: User,
+            href: "/siswa/profil",
+          },
+        ];
+
+      default:
+        return [];
+    }
+  };
+
+  const navItems = getNavItems();
+
+  const handleNavigation = (href: string) => {
+    // Add haptic feedback for mobile devices
+    if ("vibrate" in navigator) {
+      navigator.vibrate(10); // Very short vibration for tactile feedback
+    }
+
+    router.push(href);
+  };
+
+  // Only show on mobile devices
+  if (!isMobile || navItems.length === 0) {
+    return null;
+  }
+
+  return (
+    <>
+      {/* Bottom Navigation */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50 md:hidden">
+        <div className="flex items-center justify-around h-16 max-w-md mx-auto">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive =
+              pathname.startsWith(item.href) ||
+              (item.href === `/${userRole}/dashboard` &&
+                pathname === `/${userRole}`);
+
+            return (
+              <button
+                key={item.id}
+                onClick={() => handleNavigation(item.href)}
+                className={`
+                  flex flex-col items-center justify-center flex-1 h-full px-1 py-1 transition-all duration-200 active:scale-95
+                  ${
+                    isActive
+                      ? "text-blue-600 bg-blue-50"
+                      : "text-gray-500 hover:text-gray-700 active:bg-gray-50"
+                  }
+                `}
+                style={{
+                  WebkitTapHighlightColor: "transparent",
+                }}
+              >
+                <div className="relative">
+                  <Icon
+                    className={`w-5 h-5 mb-1 transition-all duration-200 ${
+                      isActive ? "text-blue-600 scale-110" : "text-gray-500"
+                    }`}
+                  />
+                  {item.badge && item.badge > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                      {item.badge > 9 ? "9+" : item.badge}
+                    </span>
+                  )}
+                  {isActive && (
+                    <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-blue-600 rounded-full"></div>
+                  )}
+                </div>
+                <span
+                  className={`text-xs font-medium transition-all duration-200 ${
+                    isActive ? "text-blue-600" : "text-gray-500"
+                  }`}
+                >
+                  {item.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </nav>
+
+      {/* Bottom padding to prevent content overlap */}
+      <div className="h-16 md:hidden"></div>
+    </>
+  );
+}

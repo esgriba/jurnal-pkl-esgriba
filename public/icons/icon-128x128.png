@@ -1,0 +1,9 @@
+<!-- PNG icon placeholder - in production you would use actual PNG files -->
+<!-- This is a simple SVG that can be converted to PNG -->
+<svg width="192" height="192" viewBox="0 0 192 192" xmlns="http://www.w3.org/2000/svg">
+  <rect width="192" height="192" fill="#3b82f6" rx="20"/>
+  <circle cx="96" cy="70" r="25" fill="white"/>
+  <text x="96" y="120" font-family="Arial, sans-serif" font-size="18" fill="white" text-anchor="middle" font-weight="bold">PKL</text>
+  <text x="96" y="140" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle">Jurnal</text>
+  <path d="M96 95 L86 105 L96 115 L106 105 Z" fill="white"/>
+</svg>

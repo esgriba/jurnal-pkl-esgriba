@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Debug Test</title>
+  </head>
+  <body>
+    <h1>Debug Test</h1>
+    <div id="results"></div>
+
+    <script>
+      // Simulate user login
+      const testUser = {
+        username: "aini",
+        role: "guru",
+        nama: "Aini Abdul",
+      };
+
+      // Set user in localStorage
+      localStorage.setItem("user", JSON.stringify(testUser));
+
+      console.log("User set in localStorage:", testUser);
+
+      // Test fetch data function
+      async function testFetchData() {
+        try {
+          console.log("Testing fetch data function...");
+
+          // This should match the fetchData function in the dashboard
+          const response = await fetch("/api/test-query", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              table: "tb_siswa",
+              select: "nisn, nama_siswa, kelas, nama_dudi",
+              filter: { id_guru: "aini" },
+            }),
+          });
+
+          const result = await response.json();
+          console.log("API Test Result:", result);
+
+          document.getElementById("results").innerHTML =
+            "<pre>" + JSON.stringify(result, null, 2) + "</pre>";
+        } catch (error) {
+          console.error("Test error:", error);
+          document.getElementById("results").innerHTML =
+            '<div style="color: red;">Error: ' + error.message + "</div>";
+        }
+      }
+
+      // Wait a bit then test
+      setTimeout(testFetchData, 1000);
+    </script>
+  </body>
+</html>
