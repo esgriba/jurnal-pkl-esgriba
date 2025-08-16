@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/components/ui/Toast";
+import { showConfirmation, showSuccess, showError } from "@/lib/sweetAlert";
 
 interface User {
   id: number;
@@ -358,11 +359,14 @@ export default function AdminUsersPage() {
   const handleDelete = async (userId: number) => {
     const userToDelete = users.find((u) => u.id === userId);
 
-    if (
-      !confirm(
-        `Apakah Anda yakin ingin menghapus user "${userToDelete?.nama}"?`
-      )
-    ) {
+    const confirmed = await showConfirmation(
+      "Konfirmasi Hapus",
+      `Apakah Anda yakin ingin menghapus user "${userToDelete?.nama}"?`,
+      "Ya, Hapus",
+      "Batal"
+    );
+
+    if (!confirmed) {
       return;
     }
 
@@ -376,8 +380,8 @@ export default function AdminUsersPage() {
 
       // Refresh users list
       fetchData();
-      success(
-        "User berhasil dihapus",
+      showSuccess(
+        "User Berhasil Dihapus",
         `User ${userToDelete?.nama} telah dihapus dari sistem.`
       );
     } catch (error) {

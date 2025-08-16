@@ -16,6 +16,8 @@ import {
 import DashboardLayout from "@/components/ui/DashboardLayout";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
+import { showSuccess, showError } from "@/lib/sweetAlert";
+import { getAddressFromCoordinates, isValidCoordinate, formatCoordinates } from "@/lib/geocoding";
 
 interface UserData {
   id: number;
@@ -138,24 +140,20 @@ export default function AbsensiPage() {
     return localTime;
   };
 
-  // Function to get address from coordinates
-  const getAddressFromCoordinates = async (lat: number, lng: number) => {
-    try {
-      setIsLoadingAddress(true);
-      // Using OpenStreetMap Nominatim API (free alternative to Google Geocoding)
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`
-      );
-      const data = await response.json();
+  // Function to get address from coordinates using utility
+  const fetchLocationAddress = async (lat: number, lng: number) => {
+    if (!isValidCoordinate(lat, lng)) {
+      setLocationAddress("Koordinat tidak valid");
+      return;
+    }
 
-      if (data && data.display_name) {
-        setLocationAddress(data.display_name);
-      } else {
-        setLocationAddress("Alamat tidak ditemukan");
-      }
+    setIsLoadingAddress(true);
+    try {
+      const result = await getAddressFromCoordinates(lat, lng);
+      setLocationAddress(result.address);
     } catch (error) {
       console.error("Error getting address:", error);
-      setLocationAddress("Gagal mendapatkan alamat");
+      setLocationAddress(formatCoordinates(lat, lng));
     } finally {
       setIsLoadingAddress(false);
     }
@@ -206,8 +204,13 @@ export default function AbsensiPage() {
 
   // Get address when coordinates change
   useEffect(() => {
-    if (coordinates) {
-      getAddressFromCoordinates(coordinates.lat, coordinates.lng);
+    if (coordinates && isValidCoordinate(coordinates.lat, coordinates.lng)) {
+      // Add delay to prevent too many requests
+      const timeoutId = setTimeout(() => {
+        fetchLocationAddress(coordinates.lat, coordinates.lng);
+      }, 1000);
+      
+      return () => clearTimeout(timeoutId);
     }
   }, [coordinates]);
 
@@ -352,21 +355,45 @@ export default function AbsensiPage() {
 
   const getCurrentLocation = () => {
     if ("geolocation" in navigator) {
+      const options = {
+        enableHighAccuracy: true,
+        timeout: 10000, // 10 seconds timeout
+        maximumAge: 60000 // Accept cached location up to 1 minute old
+      };
+      
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
           setCoordinates({ lat: latitude, lng: longitude });
 
-          // Reverse geocoding (you might want to use a service like Google Maps API)
+          // Set basic coordinate string as fallback
           setLocation(`${latitude.toFixed(6)}, ${longitude.toFixed(6)}`);
         },
         (error) => {
           console.error("Error getting location:", error);
-          setLocation("Lokasi tidak tersedia");
-        }
+          let errorMessage = "Lokasi tidak tersedia";
+          
+          switch(error.code) {
+            case error.PERMISSION_DENIED:
+              errorMessage = "Akses lokasi ditolak";
+              break;
+            case error.POSITION_UNAVAILABLE:
+              errorMessage = "Lokasi tidak tersedia";
+              break;
+            case error.TIMEOUT:
+              errorMessage = "Timeout mendapatkan lokasi";
+              break;
+          }
+          
+          setLocation(errorMessage);
+          setLocationAddress(errorMessage);
+        },
+        options
       );
     } else {
-      setLocation("Geolocation tidak didukung");
+      const errorMessage = "Geolocation tidak didukung";
+      setLocation(errorMessage);
+      setLocationAddress(errorMessage);
     }
   };
 
@@ -447,17 +474,17 @@ export default function AbsensiPage() {
       });
 
       const absensiData = {
-        nisn: siswaData.nisn,
-        nama_siswa: siswaData.nama_siswa,
-        kelas: siswaData.kelas,
-        lokasi: location,
-        id_dudi: siswaData.id_dudi,
-        nama_dudi: siswaData.nama_dudi,
+        nisn: siswaData.nisn?.substring(0, 12) || '', // Limit to 12 chars
+        nama_siswa: siswaData.nama_siswa?.substring(0, 100) || '',
+        kelas: siswaData.kelas?.substring(0, 25) || '',
+        lokasi: location?.substring(0, 100) || '',
+        id_dudi: siswaData.id_dudi?.substring(0, 25) || '', // Limit to 25 chars
+        nama_dudi: siswaData.nama_dudi?.substring(0, 200) || '',
         tanggal: jakartaDate,
         status: status,
         keterangan: isLate && status === "Hadir" ? "Terlambat" : null,
-        id_guru: siswaData.id_guru,
-        nama_guru: siswaData.nama_guru,
+        id_guru: siswaData.id_guru?.substring(0, 100) || '',
+        nama_guru: siswaData.nama_guru?.substring(0, 100) || '',
         jam_absensi: jakartaTimeForDB, // Use Jakarta time format
       };
 
@@ -477,18 +504,20 @@ export default function AbsensiPage() {
       setTodayAbsensi(data);
 
       // Simple success feedback (you can replace with your preferred notification method)
-      alert(
-        `Absensi Berhasil! Status: ${status} pada ${jakartaTimeForDisplay}`
+      showSuccess(
+        "Absensi Berhasil!",
+        `Status: ${status} pada ${jakartaTimeForDisplay}`
       );
     } catch (error) {
       console.error("Error submitting absensi:", error);
 
       // Show more specific error message
       if (error instanceof Error) {
-        alert(`Gagal Menyimpan Absensi: ${error.message}`);
+        showError("Gagal Menyimpan Absensi", error.message);
       } else {
-        alert(
-          "Gagal Menyimpan Absensi: Terjadi kesalahan tidak dikenal. Silakan coba lagi."
+        showError(
+          "Gagal Menyimpan Absensi",
+          "Terjadi kesalahan tidak dikenal. Silakan coba lagi."
         );
       }
     } finally {

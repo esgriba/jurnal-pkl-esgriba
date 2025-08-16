@@ -1,4 +1,7 @@
 // Helper functions untuk mengelola hubungan user dengan guru dan siswa
+// Note: Halaman User Profile Management telah dihapus.
+// File ini disimpan untuk backward compatibility dan possible future use.
+
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
@@ -28,6 +31,7 @@ export interface UserWithProfile {
 
 /**
  * Mendapatkan data user lengkap dengan profile guru/siswa
+ * DEPRECATED: Halaman User Profile Management telah dihapus
  */
 export async function getUserWithProfile(
   username: string
@@ -52,32 +56,8 @@ export async function getUserWithProfile(
 }
 
 /**
- * Mendapatkan data user berdasarkan ID
- */
-export async function getUserById(
-  userId: number
-): Promise<UserWithProfile | null> {
-  try {
-    const { data, error } = await supabase
-      .from("v_user_complete")
-      .select("*")
-      .eq("user_id", userId)
-      .single();
-
-    if (error) {
-      console.error("Error fetching user by ID:", error);
-      return null;
-    }
-
-    return data;
-  } catch (error) {
-    console.error("Error in getUserById:", error);
-    return null;
-  }
-}
-
-/**
  * Membuat user guru baru dengan profile
+ * Digunakan di Create User page
  */
 export async function createGuruWithUser(data: {
   username: string;
@@ -109,6 +89,7 @@ export async function createGuruWithUser(data: {
 
 /**
  * Membuat user siswa baru dengan profile
+ * Digunakan di Create User page
  */
 export async function createSiswaWithUser(data: {
   username: string;
@@ -149,156 +130,5 @@ export async function createSiswaWithUser(data: {
   } catch (error) {
     console.error("Error creating siswa with user:", error);
     return { success: false, error };
-  }
-}
-
-/**
- * Menghubungkan user yang sudah ada dengan profile guru
- */
-export async function linkUserToGuru(userId: number, idGuru: string) {
-  try {
-    const { error } = await supabase
-      .from("tb_guru")
-      .update({ user_id: userId })
-      .eq("id_guru", idGuru);
-
-    if (error) {
-      throw error;
-    }
-
-    return { success: true };
-  } catch (error) {
-    console.error("Error linking user to guru:", error);
-    return { success: false, error };
-  }
-}
-
-/**
- * Menghubungkan user yang sudah ada dengan profile siswa
- */
-export async function linkUserToSiswa(userId: number, nisn: string) {
-  try {
-    const { error } = await supabase
-      .from("tb_siswa")
-      .update({ user_id: userId })
-      .eq("nisn", nisn);
-
-    if (error) {
-      throw error;
-    }
-
-    return { success: true };
-  } catch (error) {
-    console.error("Error linking user to siswa:", error);
-    return { success: false, error };
-  }
-}
-
-/**
- * Mendapatkan semua guru beserta user data mereka
- */
-export async function getAllGuruWithUsers() {
-  try {
-    const { data, error } = await supabase
-      .from("v_user_complete")
-      .select("*")
-      .eq("role", "guru")
-      .order("nama_guru");
-
-    if (error) {
-      throw error;
-    }
-
-    return { success: true, data };
-  } catch (error) {
-    console.error("Error fetching guru with users:", error);
-    return { success: false, error };
-  }
-}
-
-/**
- * Mendapatkan semua siswa beserta user data mereka
- */
-export async function getAllSiswaWithUsers() {
-  try {
-    const { data, error } = await supabase
-      .from("v_user_complete")
-      .select("*")
-      .eq("role", "siswa")
-      .order("nama_siswa");
-
-    if (error) {
-      throw error;
-    }
-
-    return { success: true, data };
-  } catch (error) {
-    console.error("Error fetching siswa with users:", error);
-    return { success: false, error };
-  }
-}
-
-/**
- * Mendapatkan siswa yang dibimbing oleh guru tertentu
- */
-export async function getSiswaBimbinganByGuru(idGuru: string) {
-  try {
-    const { data, error } = await supabase
-      .from("v_user_complete")
-      .select("*")
-      .eq("role", "siswa")
-      .eq("siswa_id_guru", idGuru)
-      .order("nama_siswa");
-
-    if (error) {
-      throw error;
-    }
-
-    return { success: true, data };
-  } catch (error) {
-    console.error("Error fetching siswa bimbingan:", error);
-    return { success: false, error };
-  }
-}
-
-/**
- * Validasi apakah user sudah terhubung dengan profile
- */
-export async function validateUserProfileConnection(username: string) {
-  try {
-    const user = await getUserWithProfile(username);
-
-    if (!user) {
-      return {
-        isConnected: false,
-        message: "User tidak ditemukan",
-      };
-    }
-
-    if (user.role === "guru" && !user.id_guru) {
-      return {
-        isConnected: false,
-        message: "User guru belum terhubung dengan profile guru",
-      };
-    }
-
-    if (user.role === "siswa" && !user.nisn) {
-      return {
-        isConnected: false,
-        message: "User siswa belum terhubung dengan profile siswa",
-      };
-    }
-
-    return {
-      isConnected: true,
-      message: "User sudah terhubung dengan profile",
-      user,
-    };
-  } catch (error) {
-    console.error("Error validating user profile connection:", error);
-    return {
-      isConnected: false,
-      message: "Terjadi kesalahan saat validasi",
-    };
   }
 }

@@ -11,6 +11,13 @@ import {
   AlertCircle,
   CheckCircle,
 } from "lucide-react";
+import { 
+  showSuccess, 
+  showError, 
+  showWarning, 
+  showInfo, 
+  showConfirmation 
+} from "@/lib/sweetAlert";
 
 interface ImportResult {
   success: boolean;
@@ -39,15 +46,6 @@ export default function ImportSiswaPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
-  // Simple notification replacement
-  const showNotification = (
-    type: "success" | "error" | "warning" | "info",
-    text: string
-  ) => {
-    setMessage({ type, text });
-    setTimeout(() => setMessage(null), 5000);
-  };
-
   useEffect(() => {
     const userData = localStorage.getItem("user");
     if (!userData) {
@@ -70,17 +68,17 @@ export default function ImportSiswaPage() {
       // Check file type
       const fileExtension = selectedFile.name.split(".").pop()?.toLowerCase();
       if (!["xlsx", "xls"].includes(fileExtension || "")) {
-        showNotification(
-          "error",
-          "Format File Tidak Valid - Harap pilih file Excel (.xlsx atau .xls)"
+        showError(
+          "Format File Tidak Valid", 
+          "Harap pilih file Excel (.xlsx atau .xls)"
         );
         return;
       }
 
       setFile(selectedFile);
       setResult(null);
-      showNotification(
-        "success",
+      showSuccess(
+        "File Siap",
         `File ${selectedFile.name} siap untuk diupload`
       );
     }
@@ -88,8 +86,8 @@ export default function ImportSiswaPage() {
 
   const handleUpload = async () => {
     if (!file) {
-      showNotification(
-        "warning",
+      showWarning(
+        "File Diperlukan",
         "Harap pilih file Excel sebelum melakukan upload"
       );
       return;
@@ -98,7 +96,7 @@ export default function ImportSiswaPage() {
     setIsUploading(true);
     setResult(null);
 
-    showNotification("info", "Sedang mengupload dan memvalidasi data Excel...");
+    showInfo("Memproses", "Sedang mengupload dan memvalidasi data Excel...");
 
     try {
       const formData = new FormData();
@@ -130,11 +128,9 @@ export default function ImportSiswaPage() {
       setResult(data);
 
       if (data.success) {
-        showNotification(
-          "success",
-          `Import Berhasil! ${
-            data.summary?.successfulInserts || 0
-          } siswa berhasil diimport`
+        showSuccess(
+          "Import Berhasil!",
+          `${data.summary?.successfulInserts || 0} siswa berhasil diimport`
         );
 
         // Clear file input after successful upload
@@ -143,17 +139,15 @@ export default function ImportSiswaPage() {
           fileInputRef.current.value = "";
         }
       } else {
-        showNotification(
-          "error",
-          `Import Gagal: ${
-            data.message || "Terjadi kesalahan saat mengimport data"
-          }`
+        showError(
+          "Import Gagal",
+          data.message || "Terjadi kesalahan saat mengimport data"
         );
       }
     } catch (error) {
       console.error("Upload error:", error);
-      showNotification(
-        "error",
+      showError(
+        "Kesalahan Jaringan",
         "Terjadi kesalahan jaringan saat mengupload file"
       );
 
@@ -212,7 +206,7 @@ export default function ImportSiswaPage() {
     document.body.removeChild(a);
     window.URL.revokeObjectURL(url);
 
-    showNotification("success", "Template Excel berhasil didownload");
+    showSuccess("Download Berhasil", "Template Excel berhasil didownload");
   };
 
   const exportErrors = () => {

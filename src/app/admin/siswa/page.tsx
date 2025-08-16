@@ -17,6 +17,7 @@ import {
   UserX,
 } from "lucide-react";
 import Link from "next/link";
+import { showConfirmation, showSuccess, showError } from "@/lib/sweetAlert";
 
 interface Siswa {
   nisn: string;
@@ -182,7 +183,7 @@ export default function AdminSiswaPage() {
       setSelectedSiswa(null);
     } catch (error) {
       console.error("Error changing password:", error);
-      alert("Error mengubah password");
+      showError("Gagal Mengubah Password", "Error mengubah password");
     } finally {
       setIsChangingPassword(false);
     }
@@ -201,11 +202,11 @@ export default function AdminSiswaPage() {
 
       if (error) throw error;
 
-      alert("Akun user berhasil dibuat dengan password: 123456");
+      showSuccess("Akun User Berhasil Dibuat", "Akun user berhasil dibuat dengan password: 123456");
       fetchSiswa(); // Refresh data
     } catch (error) {
       console.error("Error creating user account:", error);
-      alert("Error membuat akun user");
+      showError("Gagal Membuat Akun", "Error membuat akun user");
     }
   };
 

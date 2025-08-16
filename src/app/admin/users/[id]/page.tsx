@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/components/ui/Toast";
+import { showConfirmation, showSuccess, showError } from "@/lib/sweetAlert";
 
 interface User {
   id: number;
@@ -93,17 +94,24 @@ export default function UserDetailPage() {
 
       if (error) throw error;
 
-      alert("User berhasil diupdate!");
+      showSuccess("User Berhasil Diupdate", "Data user telah diperbarui");
       setIsEditing(false);
       fetchUser(); // Refresh data
     } catch (error) {
       console.error("Error updating user:", error);
-      alert("Gagal mengupdate user!");
+      showError("Gagal Update", "Gagal mengupdate user!");
     }
   };
 
   const handleDelete = async () => {
-    if (!confirm("Apakah Anda yakin ingin menghapus user ini?")) {
+    const confirmed = await showConfirmation(
+      "Konfirmasi Hapus",
+      "Apakah Anda yakin ingin menghapus user ini?",
+      "Ya, Hapus",
+      "Batal"
+    );
+
+    if (!confirmed) {
       return;
     }
 
@@ -115,11 +123,11 @@ export default function UserDetailPage() {
 
       if (error) throw error;
 
-      alert("User berhasil dihapus!");
+      showSuccess("User Berhasil Dihapus", "User telah dihapus dari sistem");
       router.push("/admin/users");
     } catch (error) {
       console.error("Error deleting user:", error);
-      alert("Gagal menghapus user!");
+      showError("Gagal Menghapus", "Gagal menghapus user!");
     }
   };
 

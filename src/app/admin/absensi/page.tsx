@@ -17,6 +17,7 @@ import {
   Clock,
 } from "lucide-react";
 import Link from "next/link";
+import { showConfirmation, showSuccess, showError, showInfo } from "@/lib/sweetAlert";
 
 interface Absensi {
   id_absensi: number;
@@ -135,7 +136,14 @@ export default function AdminAbsensiPage() {
   };
 
   const handleDelete = async (idAbsensi: number) => {
-    if (!confirm("Apakah Anda yakin ingin menghapus data absensi ini?")) {
+    const confirmed = await showConfirmation(
+      "Konfirmasi Hapus",
+      "Apakah Anda yakin ingin menghapus data absensi ini?",
+      "Ya, Hapus",
+      "Batal"
+    );
+
+    if (!confirmed) {
       return;
     }
 
@@ -149,10 +157,10 @@ export default function AdminAbsensiPage() {
 
       // Refresh absensi list
       fetchAbsensi();
-      alert("Data absensi berhasil dihapus");
+      showSuccess("Data Absensi Berhasil Dihapus", "Data absensi telah dihapus dari sistem");
     } catch (error) {
       console.error("Error deleting absensi:", error);
-      alert("Error menghapus data absensi");
+      showError("Gagal Menghapus", "Error menghapus data absensi");
     }
   };
 
@@ -188,7 +196,7 @@ export default function AdminAbsensiPage() {
 
   const exportToCSV = () => {
     if (filteredAbsensi.length === 0) {
-      alert("Tidak ada data untuk diekspor");
+      showError("Tidak Ada Data", "Tidak ada data untuk diekspor");
       return;
     }
 
@@ -240,11 +248,14 @@ export default function AdminAbsensiPage() {
   };
 
   const handleAutoAlpha = async () => {
-    if (
-      !confirm(
-        "Apakah Anda yakin ingin menjalankan Auto Alpha? Ini akan memberikan status Alpha untuk semua siswa yang belum absen hari ini."
-      )
-    ) {
+    const confirmed = await showConfirmation(
+      "Konfirmasi Auto Alpha",
+      "Apakah Anda yakin ingin menjalankan Auto Alpha? Ini akan memberikan status Alpha untuk semua siswa yang belum absen hari ini.",
+      "Ya, Jalankan",
+      "Batal"
+    );
+
+    if (!confirmed) {
       return;
     }
 
@@ -263,11 +274,13 @@ export default function AdminAbsensiPage() {
         // Handle different response types
         if (result.processed !== undefined) {
           if (result.processed > 0) {
-            alert(
-              `Auto Alpha berhasil! ${result.processed} siswa yang belum absen sampai jam 3 sore diberi status Alpha.`
+            showSuccess(
+              "Auto Alpha Berhasil!",
+              `${result.processed} siswa yang belum absen sampai jam 3 sore diberi status Alpha.`
             );
           } else {
-            alert(
+            showInfo(
+              "Semua Siswa Sudah Absen",
               result.message ||
                 "Semua siswa sudah melakukan absensi hari ini. Tidak ada yang perlu diberi status Alpha."
             );
@@ -276,9 +289,9 @@ export default function AdminAbsensiPage() {
           fetchAbsensi();
         } else if (result.message) {
           // Handle case when it's before 3 PM
-          alert(result.message);
+          showInfo("Auto Alpha", result.message);
         } else {
-          alert("Auto Alpha berhasil dijalankan!");
+          showSuccess("Auto Alpha Berhasil", "Auto Alpha berhasil dijalankan!");
           fetchAbsensi();
         }
       } else {
@@ -286,7 +299,7 @@ export default function AdminAbsensiPage() {
       }
     } catch (error) {
       console.error("Error running auto alpha:", error);
-      alert("Gagal menjalankan auto alpha. Silakan coba lagi.");
+      showError("Gagal Auto Alpha", "Gagal menjalankan auto alpha. Silakan coba lagi.");
     } finally {
       setIsLoading(false);
     }

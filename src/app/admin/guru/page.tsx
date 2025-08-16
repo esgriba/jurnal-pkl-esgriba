@@ -19,6 +19,7 @@ import {
   UserX,
 } from "lucide-react";
 import Link from "next/link";
+import { showConfirmation, showSuccess, showError } from "@/lib/sweetAlert";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -124,11 +125,14 @@ export default function AdminGuruPage() {
   };
 
   const handleDelete = async (id_guru: string) => {
-    if (
-      !confirm(
-        "Apakah Anda yakin ingin menghapus data guru ini? Data user juga akan dihapus."
-      )
-    ) {
+    const confirmed = await showConfirmation(
+      "Konfirmasi Hapus",
+      "Apakah Anda yakin ingin menghapus data guru ini? Data user juga akan dihapus.",
+      "Ya, Hapus",
+      "Batal"
+    );
+
+    if (!confirmed) {
       return;
     }
 
@@ -144,17 +148,17 @@ export default function AdminGuruPage() {
 
       if (deleteError) throw deleteError;
 
-      success("Data guru dan akun user berhasil dihapus");
+      showSuccess("Data Guru Berhasil Dihapus", "Data guru dan akun user berhasil dihapus");
       fetchGuru();
     } catch (deleteError) {
       console.error("Error deleting guru:", deleteError);
-      error("Gagal menghapus data guru");
+      showError("Gagal Menghapus", "Gagal menghapus data guru");
     }
   };
 
   const handleChangePassword = async () => {
     if (!selectedGuru || !newPassword.trim()) {
-      error("Password tidak boleh kosong");
+      showError("Password Kosong", "Password tidak boleh kosong");
       return;
     }
 
@@ -167,7 +171,7 @@ export default function AdminGuruPage() {
 
       if (updateError) throw updateError;
 
-      success("Password berhasil diubah");
+      showSuccess("Password Berhasil Diubah", "Password guru telah diperbarui");
       setShowPasswordModal(false);
       setNewPassword("");
       setSelectedGuru(null);

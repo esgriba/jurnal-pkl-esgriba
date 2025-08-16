@@ -17,6 +17,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import Link from "next/link";
+import { showConfirmation, showSuccess, showError } from "@/lib/sweetAlert";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -99,7 +100,14 @@ export default function AdminDudiPage() {
   };
 
   const handleDelete = async (id_dudi: string) => {
-    if (!confirm("Apakah Anda yakin ingin menghapus data DUDI ini?")) {
+    const confirmed = await showConfirmation(
+      "Konfirmasi Hapus",
+      "Apakah Anda yakin ingin menghapus data DUDI ini?",
+      "Ya, Hapus",
+      "Batal"
+    );
+
+    if (!confirmed) {
       return;
     }
 
@@ -111,11 +119,11 @@ export default function AdminDudiPage() {
 
       if (deleteError) throw deleteError;
 
-      success("Data DUDI berhasil dihapus");
+      showSuccess("Data DUDI Berhasil Dihapus", "Data DUDI telah dihapus dari sistem");
       fetchDudi();
     } catch (deleteError) {
       console.error("Error deleting dudi:", deleteError);
-      error("Gagal menghapus data DUDI");
+      showError("Gagal Menghapus", "Gagal menghapus data DUDI");
     }
   };
 

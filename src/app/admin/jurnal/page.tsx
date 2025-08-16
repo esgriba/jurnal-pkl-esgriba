@@ -15,6 +15,7 @@ import {
   Download,
 } from "lucide-react";
 import Link from "next/link";
+import { showConfirmation, showSuccess, showError } from "@/lib/sweetAlert";
 
 interface Jurnal {
   id_jurnal: string;
@@ -109,7 +110,14 @@ export default function AdminJurnalPage() {
   };
 
   const handleDelete = async (idJurnal: string) => {
-    if (!confirm("Apakah Anda yakin ingin menghapus jurnal ini?")) {
+    const confirmed = await showConfirmation(
+      "Konfirmasi Hapus",
+      "Apakah Anda yakin ingin menghapus jurnal ini?",
+      "Ya, Hapus",
+      "Batal"
+    );
+
+    if (!confirmed) {
       return;
     }
 
@@ -123,16 +131,16 @@ export default function AdminJurnalPage() {
 
       // Refresh jurnal list
       fetchJurnal();
-      alert("Jurnal berhasil dihapus");
+      showSuccess("Jurnal Berhasil Dihapus", "Data jurnal telah dihapus dari sistem");
     } catch (error) {
       console.error("Error deleting jurnal:", error);
-      alert("Error menghapus jurnal");
+      showError("Gagal Menghapus", "Error menghapus jurnal");
     }
   };
 
   const exportToCSV = () => {
     if (filteredJurnal.length === 0) {
-      alert("Tidak ada data untuk diekspor");
+      showError("Tidak Ada Data", "Tidak ada data untuk diekspor");
       return;
     }
 

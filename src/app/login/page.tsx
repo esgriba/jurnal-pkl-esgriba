@@ -18,6 +18,7 @@ import {
   School,
 } from "lucide-react";
 import Link from "next/link";
+import { showError, showSuccess, showWarning } from "@/lib/sweetAlert";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -46,8 +47,9 @@ export default function LoginPage() {
 
   const onSubmit = async (data: LoginFormData) => {
     if (supabaseError) {
-      alert(
-        "Konfigurasi Database Diperlukan. Silakan hubungi administrator untuk setup database"
+      showWarning(
+        "Konfigurasi Database Diperlukan",
+        "Silakan hubungi administrator untuk setup database"
       );
       return;
     }
@@ -65,14 +67,14 @@ export default function LoginPage() {
         .single();
 
       if (error || !userData) {
-        alert("Login Gagal: Username tidak ditemukan");
+        showError("Login Gagal", "Username tidak ditemukan");
         setError("username", { message: "Username tidak ditemukan" });
         return;
       }
 
       // Simple password check (in production, use proper hashing)
       if (userData.password !== data.password) {
-        alert("Login Gagal: Password yang Anda masukkan salah");
+        showError("Login Gagal", "Password yang Anda masukkan salah");
         setError("password", { message: "Password salah" });
         return;
       }
@@ -90,7 +92,7 @@ export default function LoginPage() {
       localStorage.setItem("user", JSON.stringify(userSessionData));
 
       // Show success message
-      alert(`Login Berhasil! Selamat datang, ${userData.nama}!`);
+      showSuccess("Login Berhasil!", `Selamat datang, ${userData.nama}!`);
 
       // Redirect based on role
       console.log("User role:", userData.role, "redirecting...");
@@ -108,7 +110,7 @@ export default function LoginPage() {
       }, 100);
     } catch (error) {
       console.error("Login error:", error);
-      alert("Terjadi Kesalahan. Silakan coba lagi dalam beberapa saat");
+      showError("Terjadi Kesalahan", "Silakan coba lagi dalam beberapa saat");
       setError("username", { message: "Terjadi kesalahan, silakan coba lagi" });
     } finally {
       setIsLoading(false);

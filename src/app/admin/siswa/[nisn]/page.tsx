@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { createClient } from "@supabase/supabase-js";
 import { useToast } from "@/components/ui/Toast";
+import { showConfirmation, showSuccess, showError } from "@/lib/sweetAlert";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -120,7 +121,14 @@ export default function SiswaDetailPage() {
   const handleDelete = async () => {
     if (!siswa) return;
 
-    if (!confirm("Apakah Anda yakin ingin menghapus data siswa ini?")) {
+    const confirmed = await showConfirmation(
+      "Konfirmasi Hapus",
+      "Apakah Anda yakin ingin menghapus data siswa ini?",
+      "Ya, Hapus",
+      "Batal"
+    );
+
+    if (!confirmed) {
       return;
     }
 
@@ -133,11 +141,11 @@ export default function SiswaDetailPage() {
 
       if (deleteError) throw deleteError;
 
-      success("Data siswa berhasil dihapus");
+      showSuccess("Data Siswa Berhasil Dihapus", "Data siswa telah dihapus dari sistem");
       router.push("/admin/siswa");
     } catch (deleteError) {
       console.error("Error deleting siswa:", deleteError);
-      error("Gagal menghapus data siswa");
+      showError("Gagal Menghapus", "Gagal menghapus data siswa");
     } finally {
       setSaving(false);
     }

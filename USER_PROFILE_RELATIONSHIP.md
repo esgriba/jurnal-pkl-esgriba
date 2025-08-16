@@ -1,4 +1,38 @@
-# 🔗 Panduan Menghubungkan Data User dengan Data Guru dan Siswa
+# 🔗 ~~Panduan Menghubungkan Data User dengan Data Guru dan Siswa~~
+
+> **⚠️ HALAMAN USER PROFILE MANAGEMENT TELAH DIHAPUS**
+> 
+> Halaman `/admin/user-profile` telah dihapus karena sistem sudah menggunakan proses otomatis untuk membuat user dan profile sekaligus. Dokumentasi ini disimpan untuk referensi historis.
+
+## 📋 **Update Status (Januari 2025)**
+
+- ❌ **Halaman User Profile Management**: Dihapus
+- ✅ **Create User dengan Profile**: Masih aktif di `/admin/users/create`
+- ✅ **Import Siswa**: Masih aktif di `/admin/import-siswa` 
+- ✅ **Stored Procedures**: Masih digunakan (`create_guru_with_user`, `create_siswa_with_user`)
+- ✅ **Database View**: Masih ada untuk keperluan lain (`v_user_complete`)
+
+## 🚀 **Cara Membuat User Baru:**
+
+### **1. Untuk Guru:**
+- Gunakan halaman `/admin/users/create`
+- Pilih role "Guru"
+- Sistem otomatis membuat user + profile guru sekaligus
+
+### **2. Untuk Siswa (Manual):**
+- Gunakan halaman `/admin/users/create` 
+- Pilih role "Siswa"
+- Pilih DUDI dan Guru Pembimbing
+- Sistem otomatis membuat user + profile siswa sekaligus
+
+### **3. Untuk Siswa (Bulk):**
+- Gunakan halaman `/admin/import-siswa`
+- Upload file Excel dengan data siswa
+- Sistem hanya menambah ke `tb_siswa` (belum otomatis buat user)
+
+---
+
+## 📚 **Dokumentasi Historis (Sebelum Penghapusan)**
 
 ## 📋 **Ringkasan Masalah**
 
