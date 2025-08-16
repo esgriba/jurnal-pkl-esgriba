@@ -20,6 +20,7 @@ import {
   Edit3,
 } from "lucide-react";
 import Link from "next/link";
+import { showSuccess, showError } from "@/lib/sweetAlert";
 
 interface UserData {
   id: number;
@@ -188,10 +189,9 @@ export default function CreateJurnalPage() {
       }
 
       console.log("Insert success:", insertResult);
-      alert("Jurnal Tersimpan! Jurnal PKL berhasil disimpan ke database");
+      showSuccess("Jurnal Tersimpan!", "Jurnal PKL berhasil disimpan ke database");
 
       // Redirect to jurnal list
-      router.push("/siswa/jurnal");
       router.push("/siswa/jurnal");
     } catch (error) {
       console.error("Error creating jurnal:", error);
@@ -200,7 +200,7 @@ export default function CreateJurnalPage() {
           ? error.message
           : "Terjadi kesalahan tidak dikenal";
       setError("tanggal", { message: errorMessage });
-      alert(`Gagal Menyimpan Jurnal: ${errorMessage}`);
+      showError("Gagal Menyimpan Jurnal", errorMessage);
     } finally {
       setIsLoading(false);
     }

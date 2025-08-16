@@ -7,6 +7,7 @@ import { Lock, ArrowLeft, AlertCircle, Eye, EyeOff } from "lucide-react";
 import DashboardLayout from "@/components/ui/DashboardLayout";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
+import { showSuccess, showError } from "@/lib/sweetAlert";
 
 interface UserData {
   id: number;
@@ -120,7 +121,7 @@ export default function ChangePasswordPage() {
         throw new Error(`Failed to update password: ${updateError.message}`);
       }
 
-      alert("Password berhasil diperbarui!");
+      showSuccess("Password Berhasil Diperbarui!", "Password Anda telah berhasil diubah");
 
       // Clear password fields
       setPasswordData({
@@ -132,10 +133,10 @@ export default function ChangePasswordPage() {
       console.error("Error updating password:", err);
       if (err instanceof Error) {
         setPasswordError(err.message);
-        alert("Error: " + err.message);
+        showError("Gagal Update Password", err.message);
       } else {
         setPasswordError("Gagal memperbarui password");
-        alert("Gagal memperbarui password");
+        showError("Gagal Update Password", "Gagal memperbarui password");
       }
     } finally {
       setSavingPassword(false);

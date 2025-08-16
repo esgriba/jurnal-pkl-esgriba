@@ -18,6 +18,7 @@ import {
 import DashboardLayout from "@/components/ui/DashboardLayout";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
+import { showSuccess, showError } from "@/lib/sweetAlert";
 
 interface UserData {
   id: number;
@@ -192,8 +193,9 @@ export default function GuruAbsensiPage() {
       const result = await response.json();
 
       if (response.ok) {
-        alert(
-          `Auto Alpha berhasil! ${result.processed} siswa yang belum absen sampai jam 3 sore diberi status Alpha.`
+        showSuccess(
+          "Auto Alpha Berhasil!",
+          `${result.processed} siswa yang belum absen sampai jam 3 sore diberi status Alpha.`
         );
         // Refresh data
         fetchData(user?.username || "");
@@ -202,7 +204,7 @@ export default function GuruAbsensiPage() {
       }
     } catch (error) {
       console.error("Error running auto alpha:", error);
-      alert("Gagal menjalankan auto alpha");
+      showError("Gagal Auto Alpha", "Gagal menjalankan auto alpha");
     } finally {
       setIsLoading(false);
     }
