@@ -161,10 +161,10 @@ export default function ProfilSiswaPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-50 flex items-center justify-center">
         <div className="text-center bg-white p-8 rounded-xl shadow-lg">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-slate-800 font-medium">
+          <p className="mt-4 text-slate-800 dark:text-slate-800 font-medium">
             Loading profile data...
           </p>
         </div>
@@ -174,11 +174,15 @@ export default function ProfilSiswaPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-50 flex items-center justify-center">
         <div className="text-center bg-white p-8 rounded-xl shadow-lg">
           <div className="text-red-600 text-6xl mb-4">⚠️</div>
-          <h2 className="text-2xl font-bold text-slate-900 mb-2">Error</h2>
-          <p className="text-slate-700 mb-4 font-medium">{error}</p>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-900 mb-2">
+            Error
+          </h2>
+          <p className="text-slate-700 dark:text-slate-700 mb-4 font-medium">
+            {error}
+          </p>
           <Button
             onClick={() => router.push("/siswa/dashboard")}
             variant="primary"
@@ -192,10 +196,10 @@ export default function ProfilSiswaPage() {
 
   if (!user || !siswaData) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-50 flex items-center justify-center">
         <div className="text-center bg-white p-8 rounded-xl shadow-lg">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-slate-800 font-medium">
+          <p className="mt-4 text-slate-800 dark:text-slate-800 font-medium">
             Loading profile data...
           </p>
         </div>
@@ -204,7 +208,7 @@ export default function ProfilSiswaPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:bg-gradient-to-br dark:from-blue-50 dark:via-indigo-50 dark:to-purple-50">
       <DashboardLayout userRole="siswa">
         {/* Hero Header Section */}
         <div className="mb-8 bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-600 rounded-3xl shadow-2xl text-white overflow-hidden relative">
@@ -228,7 +232,7 @@ export default function ProfilSiswaPage() {
           {/* Personal Information */}
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-300">
             <div className="px-6 py-4 border-b border-white/30">
-              <h3 className="text-xl font-bold text-gray-900 flex items-center">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-900 flex items-center">
                 <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-2 rounded-xl mr-3">
                   <User className="h-5 w-5 text-white" />
                 </div>
@@ -238,18 +242,18 @@ export default function ProfilSiswaPage() {
             <div className="p-6">
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-1">
+                  <label className="block text-sm font-bold text-gray-700 dark:text-gray-700 mb-1">
                     Nama Lengkap
                   </label>
-                  <p className="text-gray-900 font-bold text-base">
+                  <p className="text-gray-900 dark:text-gray-900 font-bold text-base">
                     {siswaData.nama_siswa}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-1">
+                  <label className="block text-sm font-bold text-gray-700 dark:text-gray-700 mb-1">
                     NISN
                   </label>
-                  <p className="text-gray-900 font-semibold text-base">
+                  <p className="text-gray-900 dark:text-gray-900 font-semibold text-base">
                     {siswaData.nisn}
                   </p>
                 </div>
@@ -260,7 +264,7 @@ export default function ProfilSiswaPage() {
           {/* Academic Information */}
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-300">
             <div className="px-6 py-4 border-b border-white/30">
-              <h3 className="text-xl font-bold text-gray-900 flex items-center">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-900 flex items-center">
                 <div className="bg-gradient-to-br from-green-500 to-emerald-600 p-2 rounded-xl mr-3">
                   <GraduationCap className="h-5 w-5 text-white" />
                 </div>
@@ -270,45 +274,45 @@ export default function ProfilSiswaPage() {
             <div className="p-6">
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-1">
+                  <label className="block text-sm font-bold text-gray-700 dark:text-gray-700 mb-1">
                     Kelas
                   </label>
-                  <p className="text-gray-900 font-bold text-base">
+                  <p className="text-gray-900 dark:text-gray-900 font-bold text-base">
                     {siswaData.kelas}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-1">
+                  <label className="block text-sm font-bold text-gray-700 dark:text-gray-700 mb-1">
                     <Calendar className="h-4 w-4 inline mr-1" />
                     Tahun Pelajaran
                   </label>
-                  <p className="text-gray-900 font-semibold text-base">
+                  <p className="text-gray-900 dark:text-gray-900 font-semibold text-base">
                     {siswaData.tahun_pelajaran}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-800 mb-1">
+                  <label className="block text-sm font-medium text-slate-800 dark:text-slate-800 mb-1">
                     Semester
                   </label>
-                  <p className="text-slate-900 font-medium text-base">
+                  <p className="text-slate-900 dark:text-slate-900 font-medium text-base">
                     {siswaData.semester}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-800 mb-1">
+                  <label className="block text-sm font-medium text-slate-800 dark:text-slate-800 mb-1">
                     <Building className="h-4 w-4 inline mr-1" />
                     DUDI (Dunia Usaha/Dunia Industri)
                   </label>
-                  <p className="text-gray-900 font-semibold text-base">
+                  <p className="text-gray-900 dark:text-gray-900 font-semibold text-base">
                     {siswaData.nama_dudi}
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-1">
+                  <label className="block text-sm font-bold text-gray-700 dark:text-gray-700 mb-1">
                     <User className="h-4 w-4 inline mr-1" />
                     Guru Pembimbing
                   </label>
-                  <p className="text-gray-900 font-semibold text-base">
+                  <p className="text-gray-900 dark:text-gray-900 font-semibold text-base">
                     {siswaData.nama_guru}
                   </p>
                 </div>

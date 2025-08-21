@@ -233,44 +233,83 @@ export default function GuruDashboard() {
 
       {/* Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {/* Siswa List */}
-        <Card>
+        {/* Attendance Summary Today */}
+        <Card className="mb-6">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>Siswa Bimbingan</CardTitle>
-              <Button href="/guru/siswa" variant="outline" size="sm">
-                Lihat Semua
+              <CardTitle className="flex items-center gap-2">
+                <Clock className="h-5 w-5" />
+                Absensi Hari Ini ({new Date().toLocaleDateString("id-ID")})
+              </CardTitle>
+              <Button href="/guru/absensi" variant="outline" size="sm">
+                Lihat Detail
               </Button>
             </div>
           </CardHeader>
           <CardContent>
-            {siswaList.length === 0 ? (
+            {todayAttendance.length === 0 ? (
               <p className="text-gray-500 text-center py-4">
-                Belum ada siswa bimbingan
+                Belum ada siswa yang melakukan absensi hari ini
               </p>
             ) : (
-              <div className="space-y-3">
-                {siswaList.slice(0, 5).map((siswa) => (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {todayAttendance.map((attendance) => (
                   <div
-                    key={siswa.nisn}
-                    className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-md"
+                    key={attendance.id_absensi}
+                    className={`p-3 rounded-lg border ${
+                      attendance.status === "Hadir"
+                        ? "bg-green-50 border-green-200"
+                        : attendance.status === "Alpha"
+                        ? "bg-red-300 border-red-200"
+                        : "bg-yellow-200 border-yellow-200"
+                    }`}
                   >
-                    <div>
-                      <p className="font-medium text-gray-900 dark:text-white">
-                        {siswa.nama_siswa}
-                      </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {siswa.kelas} • {siswa.nama_dudi}
-                      </p>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium text-gray-900">
+                          {attendance.nama_siswa}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          {attendance.kelas}
+                        </p>
+                        {attendance.lokasi && (
+                          <div className="mt-1">
+                            <LocationLink
+                              locationStr={attendance.lokasi}
+                              showIcon={true}
+                              className="text-xs"
+                            />
+                          </div>
+                        )}
+                      </div>
+                      <div className="text-right">
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            attendance.status === "Hadir"
+                              ? "bg-green-100 text-green-800"
+                              : attendance.status === "Alpha"
+                              ? "bg-red-100 text-red-800"
+                              : "bg-yellow-100 text-yellow-800"
+                          }`}
+                        >
+                          {attendance.status}
+                        </span>
+                        <p className="text-xs text-gray-500 mt-1">
+                          {attendance.jam_absensi}
+                        </p>
+                      </div>
                     </div>
-                    <Link
-                      href={`/guru/siswa/${siswa.nisn}`}
-                      className="text-blue-600 hover:text-blue-800 dark:text-blue-400"
-                    >
-                      <Eye className="h-4 w-4" />
-                    </Link>
                   </div>
                 ))}
+              </div>
+            )}
+
+            {/* Show students who haven't attended yet */}
+            {stats.belumAbsen > 0 && (
+              <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-sm text-red-600 font-medium">
+                  {stats.belumAbsen} siswa belum melakukan absensi hari ini
+                </p>
               </div>
             )}
           </CardContent>
@@ -326,83 +365,44 @@ export default function GuruDashboard() {
         </Card>
       </div>
 
-      {/* Attendance Summary Today */}
-      <Card className="mb-6">
+      {/* Siswa List */}
+      <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
-              <Clock className="h-5 w-5" />
-              Absensi Hari Ini ({new Date().toLocaleDateString("id-ID")})
-            </CardTitle>
-            <Button href="/guru/absensi" variant="outline" size="sm">
-              Lihat Detail
+            <CardTitle>Siswa Bimbingan</CardTitle>
+            <Button href="/guru/siswa" variant="outline" size="sm">
+              Lihat Semua
             </Button>
           </div>
         </CardHeader>
         <CardContent>
-          {todayAttendance.length === 0 ? (
+          {siswaList.length === 0 ? (
             <p className="text-gray-500 text-center py-4">
-              Belum ada siswa yang melakukan absensi hari ini
+              Belum ada siswa bimbingan
             </p>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {todayAttendance.map((attendance) => (
+            <div className="space-y-3">
+              {siswaList.slice(0, 5).map((siswa) => (
                 <div
-                  key={attendance.id_absensi}
-                  className={`p-3 rounded-lg border ${
-                    attendance.status === "Hadir"
-                      ? "bg-green-50 border-green-200"
-                      : attendance.status === "Alpha"
-                      ? "bg-red-50 border-red-200"
-                      : "bg-yellow-50 border-yellow-200"
-                  }`}
+                  key={siswa.nisn}
+                  className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-md"
                 >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium text-gray-900">
-                        {attendance.nama_siswa}
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        {attendance.kelas}
-                      </p>
-                      {attendance.lokasi && (
-                        <div className="mt-1">
-                          <LocationLink 
-                            locationStr={attendance.lokasi}
-                            showIcon={false}
-                            className="text-xs"
-                          />
-                        </div>
-                      )}
-                    </div>
-                    <div className="text-right">
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          attendance.status === "Hadir"
-                            ? "bg-green-100 text-green-800"
-                            : attendance.status === "Alpha"
-                            ? "bg-red-100 text-red-800"
-                            : "bg-yellow-100 text-yellow-800"
-                        }`}
-                      >
-                        {attendance.status}
-                      </span>
-                      <p className="text-xs text-gray-500 mt-1">
-                        {attendance.jam_absensi}
-                      </p>
-                    </div>
+                  <div>
+                    <p className="font-medium text-gray-900 dark:text-white">
+                      {siswa.nama_siswa}
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {siswa.kelas} • {siswa.nama_dudi}
+                    </p>
                   </div>
+                  <Link
+                    href={`/guru/siswa/${siswa.nisn}`}
+                    className="text-blue-600 hover:text-blue-800 dark:text-blue-400"
+                  >
+                    <Eye className="h-4 w-4" />
+                  </Link>
                 </div>
               ))}
-            </div>
-          )}
-
-          {/* Show students who haven't attended yet */}
-          {stats.belumAbsen > 0 && (
-            <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-sm text-red-600 font-medium">
-                {stats.belumAbsen} siswa belum melakukan absensi hari ini
-              </p>
             </div>
           )}
         </CardContent>

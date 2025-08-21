@@ -263,10 +263,10 @@ export default function SiswaDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-600">Loading...</p>
         </div>
       </div>
     );
@@ -294,14 +294,16 @@ export default function SiswaDashboard() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading student data...</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-600">
+            Loading student data...
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:bg-gradient-to-br dark:from-blue-50 dark:via-indigo-50 dark:to-purple-50">
       <DashboardLayout userRole="siswa">
         {/* Hero Header Section */}
         <div className="mb-8 bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-600 rounded-3xl shadow-2xl text-white overflow-hidden relative">
@@ -335,10 +337,12 @@ export default function SiswaDashboard() {
                 <BookOpen className="h-6 w-6 text-white" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-2xl font-bold text-gray-900 dark:text-gray-900">
                   {jurnalCount}
                 </p>
-                <p className="text-sm text-gray-600">Total Jurnal</p>
+                <p className="text-sm text-gray-600 dark:text-gray-600">
+                  Total Jurnal
+                </p>
               </div>
             </div>
           </div>
@@ -366,10 +370,12 @@ export default function SiswaDashboard() {
                 )}
               </div>
               <div>
-                <p className="text-lg font-bold text-gray-900">
+                <p className="text-lg font-bold text-gray-900 dark:text-gray-900">
                   {todayAttendance ? todayAttendance.status : "Belum Absen"}
                 </p>
-                <p className="text-sm text-gray-600">Status Hari Ini</p>
+                <p className="text-sm text-gray-600 dark:text-gray-600">
+                  Status Hari Ini
+                </p>
               </div>
             </div>
           </div>
@@ -391,10 +397,12 @@ export default function SiswaDashboard() {
                 )}
               </div>
               <div>
-                <p className="text-lg font-bold text-gray-900">
+                <p className="text-lg font-bold text-gray-900 dark:text-gray-900">
                   {isAfter3PM ? "Tutup" : "Buka"}
                 </p>
-                <p className="text-sm text-gray-600">Absensi</p>
+                <p className="text-sm text-gray-600 dark:text-gray-600">
+                  Absensi
+                </p>
               </div>
             </div>
           </div>
@@ -403,7 +411,9 @@ export default function SiswaDashboard() {
         {/* Main Actions */}
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 mb-8">
           <div className="px-6 py-4 border-b border-white/30">
-            <h2 className="text-xl font-bold text-gray-900">Aksi Utama</h2>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-900">
+              Aksi Utama
+            </h2>
           </div>
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -441,7 +451,9 @@ export default function SiswaDashboard() {
                 >
                   <CheckCircle
                     className={`h-6 w-6 ${
-                      todayAttendance ? "text-gray-600" : "text-white"
+                      todayAttendance
+                        ? "text-gray-600 dark:text-gray-600"
+                        : "text-white"
                     }`}
                   />
                 </div>

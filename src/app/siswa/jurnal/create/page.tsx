@@ -189,7 +189,10 @@ export default function CreateJurnalPage() {
       }
 
       console.log("Insert success:", insertResult);
-      showSuccess("Jurnal Tersimpan!", "Jurnal PKL berhasil disimpan ke database");
+      showSuccess(
+        "Jurnal Tersimpan!",
+        "Jurnal PKL berhasil disimpan ke database"
+      );
 
       // Redirect to jurnal list
       router.push("/siswa/jurnal");
@@ -281,23 +284,6 @@ export default function CreateJurnalPage() {
       {/* Main Content */}
       <main className="max-w-5xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         {/* Welcome Card */}
-        <div className="mb-8 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl shadow-xl text-white overflow-hidden">
-          <div className="px-6 py-8 sm:px-8">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-3">
-                  <FileText className="h-8 w-8 text-white" />
-                </div>
-              </div>
-              <div className="ml-4">
-                <p className="text-indigo-100 mt-1">
-                  Mari dokumentasikan kegiatan PKL Anda hari ini dengan lengkap
-                  dan detail.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Basic Information Card */}

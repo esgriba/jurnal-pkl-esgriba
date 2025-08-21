@@ -174,14 +174,14 @@ export default function JurnalListPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-600">Loading...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:bg-gradient-to-br dark:from-blue-50 dark:via-indigo-50 dark:to-purple-50">
       <DashboardLayout userRole="siswa">
         {/* Hero Header Section */}
         <div className="mb-8 bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-600 rounded-3xl shadow-2xl text-white overflow-hidden relative">
@@ -239,7 +239,9 @@ export default function JurnalListPage() {
           {showFilters && (
             <div className="bg-white/80 backdrop-blur-sm border border-white/30 rounded-2xl p-6 mb-6 shadow-xl">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold text-gray-900">Filter</h3>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-gray-900">
+                  Filter
+                </h3>
                 {hasActiveFilters && (
                   <button
                     onClick={clearFilters}
@@ -254,7 +256,7 @@ export default function JurnalListPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Year Filter */}
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">
+                  <label className="block text-sm font-bold text-gray-700 dark:text-gray-700 mb-2">
                     Tahun
                   </label>
                   <select
@@ -273,7 +275,7 @@ export default function JurnalListPage() {
 
                 {/* Month Filter */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-700 mb-2">
                     Bulan
                   </label>
                   <select
@@ -311,10 +313,10 @@ export default function JurnalListPage() {
               </div>
               {hasActiveFilters ? (
                 <>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-gray-900 mb-2">
                     Tidak Ada Jurnal Ditemukan
                   </h3>
-                  <p className="text-gray-600 mb-8 max-w-sm mx-auto">
+                  <p className="text-gray-600 dark:text-gray-600 mb-8 max-w-sm mx-auto">
                     Tidak ada jurnal yang sesuai dengan filter yang dipilih.
                   </p>
                   <button
@@ -327,10 +329,10 @@ export default function JurnalListPage() {
                 </>
               ) : (
                 <>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-gray-900 mb-2">
                     Belum Ada Jurnal
                   </h3>
-                  <p className="text-gray-600 mb-8 max-w-sm mx-auto">
+                  <p className="text-gray-600 dark:text-gray-600 mb-8 max-w-sm mx-auto">
                     Mulai dokumentasikan kegiatan PKL Anda dengan membuat jurnal
                     pertama.
                   </p>
@@ -367,26 +369,26 @@ export default function JurnalListPage() {
                             </span>
                           )}
                         </div>
-                        <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2">
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-gray-900 mb-2 line-clamp-2">
                           {journal.deskripsi_kegiatan}
                         </h3>
                         <div className="space-y-2">
                           {journal.evadir_personal && (
-                            <div className="text-sm text-gray-600">
+                            <div className="text-sm text-gray-600 dark:text-gray-600">
                               <span className="font-bold">
                                 Evaluasi Personal:
                               </span>{" "}
-                              <span className="text-gray-800">
+                              <span className="text-gray-800 dark:text-gray-800">
                                 {journal.evadir_personal}
                               </span>
                             </div>
                           )}
                           {journal.evadir_sosial && (
-                            <div className="text-sm text-gray-600">
+                            <div className="text-sm text-gray-600 dark:text-gray-600">
                               <span className="font-bold">
                                 Evaluasi Sosial:
                               </span>{" "}
-                              <span className="text-gray-800">
+                              <span className="text-gray-800 dark:text-gray-800">
                                 {journal.evadir_sosial}
                               </span>
                             </div>
