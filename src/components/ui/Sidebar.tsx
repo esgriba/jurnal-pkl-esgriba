@@ -169,6 +169,16 @@ export default function Sidebar({ userRole }: SidebarProps) {
         : { href: "/siswa/absensi" }),
     },
     {
+      title: "Profil",
+      icon: <User className="h-5 w-5" />,
+      roles: ["admin", "siswa", "guru"],
+      ...(userRole === "admin"
+        ? { href: "/admin/profil" }
+        : userRole === "guru"
+        ? { href: "/guru/profil" }
+        : { href: "/siswa/profil" }),
+    },
+    {
       title: "Pengaturan",
       href: "/admin/settings",
       icon: <Settings className="h-5 w-5" />,

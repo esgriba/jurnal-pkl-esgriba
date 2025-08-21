@@ -24,6 +24,7 @@ import {
   StatCard,
 } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
+import LocationLink from "@/components/ui/LocationLink";
 
 interface UserData {
   id: number;
@@ -364,6 +365,15 @@ export default function GuruDashboard() {
                       <p className="text-sm text-gray-600">
                         {attendance.kelas}
                       </p>
+                      {attendance.lokasi && (
+                        <div className="mt-1">
+                          <LocationLink 
+                            locationStr={attendance.lokasi}
+                            showIcon={false}
+                            className="text-xs"
+                          />
+                        </div>
+                      )}
                     </div>
                     <div className="text-right">
                       <span

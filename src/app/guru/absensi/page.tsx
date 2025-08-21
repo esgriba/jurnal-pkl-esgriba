@@ -19,6 +19,7 @@ import DashboardLayout from "@/components/ui/DashboardLayout";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import { showSuccess, showError } from "@/lib/sweetAlert";
+import LocationLink from "@/components/ui/LocationLink";
 
 interface UserData {
   id: number;
@@ -400,12 +401,12 @@ export default function GuruAbsensiPage() {
                         <Clock className="h-4 w-4" />
                         <span>{attendance.jam_absensi}</span>
                       </div>
-                      {attendance.lokasi && (
-                        <div className="flex items-center gap-2">
-                          <MapPin className="h-4 w-4" />
-                          <span className="truncate">{attendance.lokasi}</span>
-                        </div>
-                      )}
+                      <LocationLink 
+                        locationStr={attendance.lokasi} 
+                        showIcon={false}
+                        showFullAddress={false}
+                        className="truncate"
+                      />
                     </div>
 
                     {attendance.keterangan && (

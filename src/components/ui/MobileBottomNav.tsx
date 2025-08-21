@@ -80,10 +80,10 @@ export default function MobileBottomNav({ userRole }: MobileBottomNavProps) {
             href: "/admin/jurnal",
           },
           {
-            id: "more",
-            label: "Lainnya",
-            icon: Settings,
-            href: "/admin/users",
+            id: "profil",
+            label: "Profil",
+            icon: User,
+            href: "/admin/profil",
           },
         ];
 
@@ -111,7 +111,7 @@ export default function MobileBottomNav({ userRole }: MobileBottomNavProps) {
             id: "profile",
             label: "Profil",
             icon: User,
-            href: "/guru/profile",
+            href: "/guru/profil",
           },
         ];
 

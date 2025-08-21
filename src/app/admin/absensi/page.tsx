@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { showConfirmation, showSuccess, showError, showInfo } from "@/lib/sweetAlert";
+import LocationLink, { LocationBadge } from "@/components/ui/LocationLink";
 
 interface Absensi {
   id_absensi: number;
@@ -568,8 +569,13 @@ export default function AdminAbsensiPage() {
                             </div>
                           )}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {a.lokasi || "Tidak disebutkan"}
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <LocationLink 
+                            locationStr={a.lokasi} 
+                            showIcon={true}
+                            showFullAddress={false}
+                            className="max-w-xs"
+                          />
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-900">
