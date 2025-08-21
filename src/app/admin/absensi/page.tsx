@@ -337,15 +337,8 @@ export default function AdminAbsensiPage() {
       <div className="min-h-screen bg-gray-50">
         {/* Header */}
         <nav className="bg-white shadow-sm border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-7">
             <div className="flex items-center h-16">
-              <Link
-                href="/admin/dashboard"
-                className="flex items-center text-gray-600 hover:text-gray-900 mr-4"
-              >
-                <ArrowLeft className="h-5 w-5 mr-1" />
-                Back
-              </Link>
               <div className="flex items-center">
                 <Calendar className="h-6 w-6 text-indigo-600 mr-2" />
                 <h1 className="text-xl font-semibold text-gray-900">
@@ -381,7 +374,7 @@ export default function AdminAbsensiPage() {
         </nav>
 
         {/* Main Content */}
-        <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <main className="max-w-9xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
           {/* Filters and Actions */}
           <div className="bg-white shadow rounded-lg mb-6">
             <div className="px-4 py-5 sm:p-6">

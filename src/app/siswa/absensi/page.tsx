@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import WarningModal from "@/components/ui/WarningModal";
 import {
   MapPin,
   Clock,
@@ -111,6 +110,7 @@ export default function AbsensiPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [location, setLocation] = useState<string>("");
+  const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const [coordinates, setCoordinates] = useState<{
     lat: number;
     lng: number;
@@ -132,18 +132,25 @@ export default function AbsensiPage() {
   const [isServerTimeAvailable, setIsServerTimeAvailable] = useState(false);
   const [locationAddress, setLocationAddress] = useState<string>("");
   const [isLoadingAddress, setIsLoadingAddress] = useState(false);
-  const [selectedKehadiran, setSelectedKehadiran] = useState("");
-  const [showWarningModal, setShowWarningModal] = useState(false);
-  const [pendingSubmission, setPendingSubmission] = useState<{
-    type: "masuk" | "pulang";
-    kehadiran: string;
-  } | null>(null);
 
   const router = useRouter();
   const supabase = createClient();
 
-  // Calculate disable conditions - only disable if not mounted, submitting, or already attended
-  const isButtonDisabled = !isMounted || isSubmitting || todayAbsensi !== null;
+  // Calculate disable conditions - disable if not mounted, submitting, already attended, no valid location, OR after 3 PM
+  const isLocationValid =
+    coordinates !== null &&
+    !location.includes("ditolak") &&
+    !location.includes("tersedia") &&
+    !location.includes("Timeout") &&
+    !location.includes("Error") &&
+    !location.includes("tidak didukung") &&
+    !location.includes("HTTPS");
+  const isButtonDisabled =
+    !isMounted ||
+    isSubmitting ||
+    todayAbsensi !== null ||
+    !isLocationValid ||
+    isAfter3PM;
 
   // Debug logging
   useEffect(() => {
@@ -152,6 +159,9 @@ export default function AbsensiPage() {
       isSubmitting,
       isAfter3PM,
       todayAbsensi: !!todayAbsensi,
+      isLocationValid,
+      coordinates: !!coordinates,
+      location,
       isButtonDisabled,
       serverTime: serverTime?.toISOString(),
       environment: process.env.NODE_ENV,
@@ -161,6 +171,9 @@ export default function AbsensiPage() {
     isSubmitting,
     isAfter3PM,
     todayAbsensi,
+    isLocationValid,
+    coordinates,
+    location,
     isButtonDisabled,
     serverTime,
   ]);
@@ -420,86 +433,177 @@ export default function AbsensiPage() {
   };
 
   const getCurrentLocation = () => {
-    if ("geolocation" in navigator) {
-      const options = {
-        enableHighAccuracy: true,
-        timeout: 10000, // 10 seconds timeout
-        maximumAge: 60000, // Accept cached location up to 1 minute old
-      };
+    console.log("🔍 Mencoba mendapatkan lokasi...");
 
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          setCoordinates({ lat: latitude, lng: longitude });
+    // Debug information
+    console.log("🌍 User Agent:", navigator.userAgent);
+    console.log("🔒 Protocol:", window.location.protocol);
+    console.log("🏠 Hostname:", window.location.hostname);
+    console.log("🔌 Geolocation support:", "geolocation" in navigator);
 
-          // Set basic coordinate string as fallback
-          setLocation(`${latitude.toFixed(6)}, ${longitude.toFixed(6)}`);
-        },
-        (error) => {
-          console.error("Error getting location:", error);
-          let errorMessage = "Lokasi tidak tersedia";
-
-          switch (error.code) {
-            case error.PERMISSION_DENIED:
-              errorMessage = "Akses lokasi ditolak";
-              break;
-            case error.POSITION_UNAVAILABLE:
-              errorMessage = "Lokasi tidak tersedia";
-              break;
-            case error.TIMEOUT:
-              errorMessage = "Timeout mendapatkan lokasi";
-              break;
-          }
-
-          setLocation(errorMessage);
-          setLocationAddress(errorMessage);
-        },
-        options
-      );
-    } else {
-      const errorMessage = "Geolocation tidak didukung";
+    if (!("geolocation" in navigator)) {
+      const errorMessage = "Geolocation tidak didukung oleh browser ini";
+      console.error("❌ Geolocation tidak didukung");
       setLocation(errorMessage);
       setLocationAddress(errorMessage);
+      showError("Browser tidak mendukung layanan lokasi");
+      return;
     }
+
+    // Check if we're on HTTPS or localhost (required for geolocation)
+    if (
+      window.location.protocol !== "https:" &&
+      window.location.hostname !== "localhost"
+    ) {
+      const errorMessage = "Geolocation memerlukan koneksi HTTPS";
+      console.error("❌ Bukan HTTPS atau localhost");
+      setLocation(errorMessage);
+      setLocationAddress(errorMessage);
+      showError("Akses lokasi memerlukan koneksi HTTPS yang aman");
+      return;
+    }
+
+    // Request permission explicitly first
+    if ("permissions" in navigator) {
+      navigator.permissions
+        .query({ name: "geolocation" })
+        .then((result) => {
+          console.log("🔒 Status permission lokasi:", result.state);
+
+          if (result.state === "denied") {
+            const errorMessage =
+              "Akses lokasi ditolak - mohon aktifkan di pengaturan browser";
+            setLocation(errorMessage);
+            setLocationAddress(errorMessage);
+            showError(
+              "Akses lokasi ditolak. Silakan aktifkan izin lokasi di pengaturan browser dan refresh halaman."
+            );
+            return;
+          }
+
+          // Proceed with location request
+          requestLocation();
+        })
+        .catch((err) => {
+          console.log("⚠️ Permissions API error:", err);
+          // Fallback if permissions API not supported
+          requestLocation();
+        });
+    } else {
+      console.log("⚠️ Permissions API tidak didukung, mencoba langsung");
+      // Fallback for older browsers
+      requestLocation();
+    }
+  };
+
+  const requestLocation = () => {
+    const options = {
+      enableHighAccuracy: true,
+      timeout: 15000, // Increase timeout to 15 seconds
+      maximumAge: 30000, // Accept cached location up to 30 seconds old
+    };
+
+    console.log("📍 Meminta lokasi dengan options:", options);
+    setIsLoadingLocation(true);
+    setLocation("Mendapatkan lokasi...");
+    setLocationAddress("Mendapatkan alamat...");
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        console.log("✅ Lokasi berhasil didapat:", position);
+        const { latitude, longitude, accuracy } = position.coords;
+
+        console.log(
+          `📌 Koordinat: ${latitude}, ${longitude} (akurasi: ${accuracy}m)`
+        );
+
+        setCoordinates({ lat: latitude, lng: longitude });
+
+        // Set basic coordinate string as fallback
+        const locationString = `${latitude.toFixed(6)}, ${longitude.toFixed(
+          6
+        )}`;
+        setLocation(locationString);
+        setIsLoadingLocation(false);
+
+        console.log("✅ Koordinat berhasil disimpan");
+      },
+      (error) => {
+        console.error("❌ Error getting location:", error);
+        setIsLoadingLocation(false);
+        let errorMessage = "Gagal mendapatkan lokasi";
+        let userMessage = "Terjadi kesalahan saat mendapatkan lokasi";
+
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage = "Akses lokasi ditolak";
+            userMessage =
+              "Izin akses lokasi ditolak. Silakan:\n1. Klik ikon gembok di address bar\n2. Izinkan akses lokasi\n3. Refresh halaman";
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage = "Lokasi tidak tersedia";
+            userMessage =
+              "Lokasi tidak dapat ditentukan. Pastikan GPS aktif dan sinyal baik.";
+            break;
+          case error.TIMEOUT:
+            errorMessage = "Timeout mendapatkan lokasi (15 detik)";
+            userMessage =
+              "Timeout mendapatkan lokasi. Coba lagi dengan koneksi yang lebih stabil.";
+            break;
+          default:
+            errorMessage = `Error: ${error.message}`;
+            userMessage =
+              "Terjadi kesalahan tidak terduga saat mendapatkan lokasi.";
+        }
+
+        setLocation(errorMessage);
+        setLocationAddress(errorMessage);
+        showError(userMessage);
+      },
+      options
+    );
   };
 
   // Handle button click with time warning
   const handleAbsensiClick = (type: "masuk" | "pulang", kehadiran: string) => {
-    // Check if it's after 3 PM (15:00)
-    if (isAfter3PM) {
-      setSelectedKehadiran(kehadiran);
-      setPendingSubmission({ type, kehadiran });
-      setShowWarningModal(true);
-    } else {
-      // Proceed directly if not after 3 PM
-      if (type === "masuk") {
-        submitAbsensi(kehadiran as "Hadir" | "Sakit" | "Izin");
-      } else {
-        // Handle pulang logic here if needed
-        submitAbsensi(kehadiran as "Hadir" | "Sakit" | "Izin");
-      }
+    // Check if location is valid before proceeding
+    if (!isLocationValid) {
+      showError(
+        "Lokasi Belum Tersedia",
+        "Anda harus mengaktifkan lokasi terlebih dahulu untuk melakukan absensi.\n\nPastikan:\n• GPS/Lokasi sudah diaktifkan\n• Browser memiliki izin akses lokasi\n• Sinyal GPS tersedia"
+      );
+      return;
     }
-  };
 
-  // Confirm submission after warning
-  const handleConfirmSubmission = () => {
-    if (pendingSubmission) {
-      if (pendingSubmission.type === "masuk") {
-        submitAbsensi(
-          pendingSubmission.kehadiran as "Hadir" | "Sakit" | "Izin"
-        );
-      } else {
-        // Handle pulang logic here if needed
-        submitAbsensi(
-          pendingSubmission.kehadiran as "Hadir" | "Sakit" | "Izin"
-        );
-      }
-      setPendingSubmission(null);
+    // Block attendance completely after 3 PM (15:00)
+    if (isAfter3PM) {
+      showError(
+        "Waktu Absensi Telah Berakhir",
+        "Absensi tidak dapat dilakukan setelah jam 15:00 WIB.\n\nJika ada keperluan khusus, silakan hubungi guru pembimbing Anda."
+      );
+      return;
+    }
+
+    // Proceed with attendance submission
+    if (type === "masuk") {
+      submitAbsensi(kehadiran as "Hadir" | "Sakit" | "Izin");
+    } else {
+      // Handle pulang logic here if needed
+      submitAbsensi(kehadiran as "Hadir" | "Sakit" | "Izin");
     }
   };
 
   const submitAbsensi = async (status: "Hadir" | "Sakit" | "Izin") => {
     if (!siswaData || !user) return;
+
+    // Double-check: Block attendance after 3 PM
+    if (isAfter3PM) {
+      showError(
+        "Waktu Absensi Telah Berakhir",
+        "Absensi tidak dapat dilakukan setelah jam 15:00 WIB."
+      );
+      return;
+    }
 
     setIsSubmitting(true);
 
@@ -763,7 +867,61 @@ export default function AbsensiPage() {
                 <div className="bg-gray-100 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
                   <MapPin className="h-8 w-8 text-gray-400" />
                 </div>
-                <p className="text-gray-600">Mendeteksi lokasi...</p>
+                {location.includes("ditolak") ||
+                location.includes("tersedia") ||
+                location.includes("Timeout") ||
+                location.includes("Error") ? (
+                  <div className="space-y-4">
+                    <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+                      <p className="text-red-600 font-medium mb-2">
+                        ⚠️ Lokasi Tidak Dapat Diakses
+                      </p>
+                      <p className="text-red-700 text-sm">{location}</p>
+                    </div>
+                    <button
+                      onClick={getCurrentLocation}
+                      className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
+                    >
+                      🔄 Coba Lagi
+                    </button>
+                    <div className="text-left bg-blue-50 p-4 rounded-xl text-sm">
+                      <p className="font-medium text-blue-900 mb-2">
+                        💡 Tips mengatasi masalah lokasi:
+                      </p>
+                      <ul className="list-disc list-inside text-blue-800 space-y-1">
+                        <li>Pastikan browser mengizinkan akses lokasi</li>
+                        <li>Aktifkan GPS/layanan lokasi di perangkat</li>
+                        <li>Pastikan koneksi internet stabil</li>
+                        <li>Refresh halaman jika diperlukan</li>
+                      </ul>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="text-gray-600">
+                      {isLoadingLocation ||
+                      location === "Mendapatkan lokasi..." ? (
+                        <div className="flex items-center justify-center gap-2">
+                          <div className="animate-spin rounded-full h-5 w-5 border-2 border-blue-500 border-t-transparent"></div>
+                          <span>Mendapatkan lokasi...</span>
+                        </div>
+                      ) : (
+                        <div className="text-center">
+                          📍 Lokasi diperlukan untuk absensi
+                        </div>
+                      )}
+                    </div>
+                    {!isLoadingLocation &&
+                      !location.includes("Mendapatkan") && (
+                        <button
+                          onClick={getCurrentLocation}
+                          className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
+                        >
+                          🎯 Izinkan Akses Lokasi
+                        </button>
+                      )}
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -838,6 +996,14 @@ export default function AbsensiPage() {
                   </p>
                 </div>
               )}
+              {!isLocationValid && (
+                <div className="mt-2 bg-orange-500/20 border border-orange-300 rounded-lg p-3">
+                  <p className="text-orange-100 text-sm">
+                    📍 Lokasi belum aktif. Silakan izinkan akses lokasi terlebih
+                    dahulu untuk melakukan absensi.
+                  </p>
+                </div>
+              )}
             </div>
             <div className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -863,6 +1029,8 @@ export default function AbsensiPage() {
                     <p className="text-sm text-gray-600 mb-4">
                       {todayAbsensi
                         ? "Anda sudah melakukan absensi hari ini"
+                        : !isLocationValid
+                        ? "Lokasi diperlukan untuk absensi"
                         : isAfter3PM
                         ? "Waktu absensi telah berakhir"
                         : "Saya hadir hari ini"}
@@ -901,6 +1069,8 @@ export default function AbsensiPage() {
                     <p className="text-sm text-gray-600 mb-4">
                       {todayAbsensi
                         ? "Anda sudah melakukan absensi hari ini"
+                        : !isLocationValid
+                        ? "Lokasi diperlukan untuk absensi"
                         : isAfter3PM
                         ? "Waktu absensi telah berakhir"
                         : "Saya sedang sakit"}
@@ -939,6 +1109,8 @@ export default function AbsensiPage() {
                     <p className="text-sm text-gray-600 mb-4">
                       {todayAbsensi
                         ? "Anda sudah melakukan absensi hari ini"
+                        : !isLocationValid
+                        ? "Lokasi diperlukan untuk absensi"
                         : isAfter3PM
                         ? "Waktu absensi telah berakhir"
                         : "Saya ada keperluan"}
@@ -1024,20 +1196,6 @@ export default function AbsensiPage() {
             </div>
           </div>
         </div>
-
-        {/* Warning Modal */}
-        <WarningModal
-          isOpen={showWarningModal}
-          onClose={() => {
-            setShowWarningModal(false);
-            setPendingSubmission(null);
-          }}
-          title="Peringatan Waktu Absensi"
-          message="Waktu absensi sudah lewat dari jam 15:00 WIB. Apakah Anda yakin ingin melanjutkan absensi?"
-          onConfirm={handleConfirmSubmission}
-          confirmText="Ya, Lanjutkan"
-          cancelText="Batal"
-        />
       </DashboardLayout>
     </div>
   );

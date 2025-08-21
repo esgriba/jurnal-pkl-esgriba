@@ -234,7 +234,7 @@ export default function GuruDashboard() {
       {/* Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         {/* Attendance Summary Today */}
-        <Card className="mb-6">
+        <Card className="mb-3">
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2">
@@ -316,7 +316,7 @@ export default function GuruDashboard() {
         </Card>
 
         {/* Recent Journals */}
-        <Card>
+        <Card className="mb-3">
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle>Jurnal Terbaru</CardTitle>
@@ -366,7 +366,7 @@ export default function GuruDashboard() {
       </div>
 
       {/* Siswa List */}
-      <Card>
+      <Card className="mb-6">
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>Siswa Bimbingan</CardTitle>
@@ -405,86 +405,6 @@ export default function GuruDashboard() {
               ))}
             </div>
           )}
-        </CardContent>
-      </Card>
-
-      {/* Quick Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Aksi Cepat</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
-              <div className="flex items-center mb-3">
-                <Users className="h-6 w-6 text-blue-600" />
-                <h3 className="ml-2 text-lg font-medium text-gray-900">
-                  Kelola Siswa
-                </h3>
-              </div>
-              <p className="text-sm text-gray-600 mb-4">
-                Lihat dan kelola data siswa bimbingan
-              </p>
-              <Button href="/guru/siswa" size="sm" className="w-full">
-                Kelola Siswa
-              </Button>
-            </div>
-
-            <div className="p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
-              <div className="flex items-center mb-3">
-                <CheckCircle className="h-6 w-6 text-purple-600" />
-                <h3 className="ml-2 text-lg font-medium text-gray-900">
-                  Absensi
-                </h3>
-              </div>
-              <p className="text-sm text-gray-600 mb-4">
-                Monitor kehadiran siswa PKL
-              </p>
-              <Button
-                href="/guru/absensi"
-                variant="secondary"
-                size="sm"
-                className="w-full"
-              >
-                Lihat Absensi
-              </Button>
-            </div>
-
-            <div className="p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
-              <div className="flex items-center mb-3">
-                <BookOpen className="h-6 w-6 text-green-600" />
-                <h3 className="ml-2 text-lg font-medium text-gray-900">
-                  Monitor Jurnal
-                </h3>
-              </div>
-              <p className="text-sm text-gray-600 mb-4">
-                Pantau dan evaluasi jurnal PKL siswa
-              </p>
-              <Button
-                href="/guru/jurnal"
-                variant="success"
-                size="sm"
-                className="w-full"
-              >
-                Monitor Jurnal
-              </Button>
-            </div>
-
-            <div className="p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
-              <div className="flex items-center mb-3">
-                <Search className="h-6 w-6 text-orange-600" />
-                <h3 className="ml-2 text-lg font-medium text-gray-900">
-                  Monitoring
-                </h3>
-              </div>
-              <p className="text-sm text-gray-600 mb-4">
-                Buat catatan monitoring dan penilaian PKL
-              </p>
-              <Button href="#" variant="warning" size="sm" className="w-full">
-                Buat Monitoring
-              </Button>
-            </div>
-          </div>
         </CardContent>
       </Card>
     </DashboardLayout>
