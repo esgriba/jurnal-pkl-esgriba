@@ -178,12 +178,6 @@ export default function Sidebar({ userRole }: SidebarProps) {
         ? { href: "/guru/profil" }
         : { href: "/siswa/profil" }),
     },
-    {
-      title: "Pengaturan",
-      href: "/admin/settings",
-      icon: <Settings className="h-5 w-5" />,
-      roles: ["admin"],
-    },
   ];
 
   const filteredMenuItems = menuItems.filter((item) =>
@@ -263,12 +257,13 @@ export default function Sidebar({ userRole }: SidebarProps) {
 
   return (
     <>
-      {/* Mobile menu button - Hidden when bottom nav is available */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-md !bg-white shadow-lg hidden"
-      >
-        {isOpen ? <X className="h-6 w-6 text-slate-800" /> : <Menu className="h-6 w-6 text-slate-800" />}
+      {/* Mobile menu button - Hidden since we use bottom navigation */}
+      <button onClick={() => setIsOpen(!isOpen)} className="hidden">
+        {isOpen ? (
+          <X className="h-6 w-6 text-slate-800" />
+        ) : (
+          <Menu className="h-6 w-6 text-slate-800" />
+        )}
       </button>
 
       {/* Overlay for mobile */}
@@ -287,9 +282,7 @@ export default function Sidebar({ userRole }: SidebarProps) {
       >
         {/* Header */}
         <div className="p-6 border-b border-slate-200 bg-gradient-to-r from-blue-50 to-indigo-50">
-          <h1 className="text-xl font-bold text-slate-800">
-            Jurnal PKL
-          </h1>
+          <h1 className="text-xl font-bold text-slate-800">Jurnal PKL</h1>
           <p className="text-sm text-slate-600 capitalize">
             {userRole} Dashboard
           </p>

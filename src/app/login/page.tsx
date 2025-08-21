@@ -133,7 +133,7 @@ export default function LoginPage() {
             <div className="space-y-6">
               <div className="flex items-center space-x-4">
                 <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-4">
-                  <GraduationCap className="h-12 w-12 text-white" />
+                  <GraduationCap className="h-12 w-12 text-blue-500" />
                 </div>
                 <div>
                   <h1 className="text-4xl lg:text-5xl font-bold leading-tight">
@@ -159,26 +159,19 @@ export default function LoginPage() {
               {/* Feature Highlights */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center">
-                  <BookOpen className="h-8 w-8 text-white mx-auto mb-2" />
-                  <h3 className="font-medium text-white mb-1">
+                  <BookOpen className="h-8 w-8 text-blue-500 mx-auto mb-2" />
+                  <h3 className="font-extrabold text-blue-500 mb-1">
                     Jurnal Digital
                   </h3>
-                  <p className="text-white/70 text-sm">Catat kegiatan harian</p>
+                  <p className="text-blue-500 text-sm">Catat kegiatan harian</p>
                 </div>
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center">
-                  <School className="h-8 w-8 text-white mx-auto mb-2" />
-                  <h3 className="font-medium text-white mb-1">
+                  <School className="h-8 w-8 text-blue-500 mx-auto mb-2" />
+                  <h3 className="font-extrabold text-blue-500 mb-1">
                     Absensi Online
                   </h3>
-                  <p className="text-white/70 text-sm">
+                  <p className="text-blue-500 text-sm">
                     Pantau kehadiran real-time
-                  </p>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center">
-                  <User className="h-8 w-8 text-white mx-auto mb-2" />
-                  <h3 className="font-medium text-white mb-1">Bimbingan</h3>
-                  <p className="text-white/70 text-sm">
-                    Komunikasi dengan guru
                   </p>
                 </div>
               </div>

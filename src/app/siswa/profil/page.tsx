@@ -211,15 +211,9 @@ export default function ProfilSiswaPage() {
           <div className="absolute inset-0 bg-black/10"></div>
           <div className="relative px-6 py-8 sm:px-8">
             <div className="flex items-center">
-              <button
-                onClick={() => router.push("/siswa/dashboard")}
-                className="mr-4 p-2 bg-white/20 hover:bg-white/30 rounded-xl transition-all duration-200 backdrop-blur-sm border border-white/30"
-              >
-                <ArrowLeft className="h-5 w-5 text-white" />
-              </button>
               <div>
                 <h1 className="text-3xl lg:text-4xl font-bold mb-2">
-                  Profil Siswa 👤
+                  Profil Siswa
                 </h1>
                 <p className="text-blue-100 text-lg">
                   Informasi data diri dan akademik

@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import {
   Home,
@@ -32,23 +31,6 @@ interface NavItem {
 export default function MobileBottomNav({ userRole }: MobileBottomNavProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const [isMobile, setIsMobile] = useState(false);
-
-  // Check if device is mobile
-  useEffect(() => {
-    const checkMobile = () => {
-      const userAgent = navigator.userAgent.toLowerCase();
-      const isMobileDevice =
-        /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/.test(
-          userAgent
-        ) || window.innerWidth <= 768;
-      setIsMobile(isMobileDevice);
-    };
-
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
 
   // Define navigation items based on user role
   const getNavItems = (): NavItem[] => {
@@ -159,8 +141,8 @@ export default function MobileBottomNav({ userRole }: MobileBottomNavProps) {
     router.push(href);
   };
 
-  // Only show on mobile devices
-  if (!isMobile || navItems.length === 0) {
+  // Only show on mobile (controlled by CSS classes)
+  if (navItems.length === 0) {
     return null;
   }
 

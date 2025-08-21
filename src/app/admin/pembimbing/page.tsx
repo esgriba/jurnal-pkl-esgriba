@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import DashboardLayout from "@/components/ui/DashboardLayout";
 import {
   Users,
   UserCheck,

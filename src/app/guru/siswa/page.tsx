@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import DashboardLayout from "@/components/ui/DashboardLayout";
 import {
   Users,
   BookOpen,
@@ -221,246 +222,250 @@ export default function GuruSiswaPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+      <DashboardLayout userRole="guru">
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Loading...</p>
+          </div>
         </div>
-      </div>
+      </DashboardLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Link
-              href="/guru/dashboard"
-              className="flex items-center text-gray-600 hover:text-gray-900"
-            >
-              <ArrowLeft className="h-5 w-5 mr-2" />
-              Kembali
-            </Link>
-            <div className="ml-4">
-              <h1 className="text-xl font-semibold text-gray-900">
-                Siswa Bimbingan
-              </h1>
-              <p className="text-sm text-gray-600">Guru: {user?.nama}</p>
+    <DashboardLayout userRole="guru">
+      <div className="min-h-screen bg-gray-50">
+        {/* Header */}
+        <header className="bg-white shadow">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+              <Link
+                href="/guru/dashboard"
+                className="flex items-center text-gray-600 hover:text-gray-900"
+              >
+                <ArrowLeft className="h-5 w-5 mr-2" />
+                Kembali
+              </Link>
+              <div className="ml-4">
+                <h1 className="text-xl font-semibold text-gray-900">
+                  Siswa Bimbingan
+                </h1>
+                <p className="text-sm text-gray-600">Guru: {user?.nama}</p>
+              </div>
             </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <div className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <Users className="h-8 w-8 text-blue-600" />
+        {/* Main Content */}
+        <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+          {/* Stats Overview */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div className="bg-white overflow-hidden shadow rounded-lg">
+              <div className="p-5">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <Users className="h-8 w-8 text-blue-600" />
+                  </div>
+                  <div className="ml-5 w-0 flex-1">
+                    <dl>
+                      <dt className="text-sm font-medium text-gray-500 truncate">
+                        Total Siswa Bimbingan
+                      </dt>
+                      <dd className="text-lg font-medium text-gray-900">
+                        {siswaList.length} siswa
+                      </dd>
+                    </dl>
+                  </div>
                 </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">
-                      Total Siswa Bimbingan
-                    </dt>
-                    <dd className="text-lg font-medium text-gray-900">
-                      {siswaList.length} siswa
-                    </dd>
-                  </dl>
+              </div>
+            </div>
+
+            <div className="bg-white overflow-hidden shadow rounded-lg">
+              <div className="p-5">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <BookOpen className="h-8 w-8 text-green-600" />
+                  </div>
+                  <div className="ml-5 w-0 flex-1">
+                    <dl>
+                      <dt className="text-sm font-medium text-gray-500 truncate">
+                        Total Jurnal
+                      </dt>
+                      <dd className="text-lg font-medium text-gray-900">
+                        {Object.values(jurnalStats).reduce(
+                          (sum, stats) => sum + stats.totalJurnal,
+                          0
+                        )}{" "}
+                        jurnal
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white overflow-hidden shadow rounded-lg">
+              <div className="p-5">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <Calendar className="h-8 w-8 text-purple-600" />
+                  </div>
+                  <div className="ml-5 w-0 flex-1">
+                    <dl>
+                      <dt className="text-sm font-medium text-gray-500 truncate">
+                        Jurnal Bulan Ini
+                      </dt>
+                      <dd className="text-lg font-medium text-gray-900">
+                        {Object.values(jurnalStats).reduce(
+                          (sum, stats) => sum + stats.jurnalBulanIni,
+                          0
+                        )}{" "}
+                        jurnal
+                      </dd>
+                    </dl>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <BookOpen className="h-8 w-8 text-green-600" />
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">
-                      Total Jurnal
-                    </dt>
-                    <dd className="text-lg font-medium text-gray-900">
-                      {Object.values(jurnalStats).reduce(
-                        (sum, stats) => sum + stats.totalJurnal,
-                        0
-                      )}{" "}
-                      jurnal
-                    </dd>
-                  </dl>
+          {/* Search */}
+          <div className="bg-white shadow rounded-lg mb-6">
+            <div className="p-6">
+              <div className="max-w-md">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Cari Siswa
+                </label>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Cari nama, NISN, kelas, atau tempat PKL..."
+                    className="pl-10 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                  />
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <Calendar className="h-8 w-8 text-purple-600" />
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">
-                      Jurnal Bulan Ini
-                    </dt>
-                    <dd className="text-lg font-medium text-gray-900">
-                      {Object.values(jurnalStats).reduce(
-                        (sum, stats) => sum + stats.jurnalBulanIni,
-                        0
-                      )}{" "}
-                      jurnal
-                    </dd>
-                  </dl>
-                </div>
-              </div>
+          {/* Siswa List */}
+          <div className="bg-white shadow rounded-lg">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h3 className="text-lg font-medium text-gray-900">
+                Daftar Siswa Bimbingan
+              </h3>
+              <p className="mt-1 text-sm text-gray-600">
+                Monitoring siswa yang Anda bimbing
+              </p>
             </div>
-          </div>
-        </div>
 
-        {/* Search */}
-        <div className="bg-white shadow rounded-lg mb-6">
-          <div className="p-6">
-            <div className="max-w-md">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Cari Siswa
-              </label>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Cari nama, NISN, kelas, atau tempat PKL..."
-                  className="pl-10 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Siswa
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Tempat PKL
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Jurnal
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Aktivitas
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Aksi
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {filteredSiswa.map((siswa) => {
+                    const stats = jurnalStats[siswa.nisn] || {
+                      totalJurnal: 0,
+                      jurnalBulanIni: 0,
+                      lastEntry: null,
+                    };
+                    const activityStatus = getActivityStatus(stats.lastEntry);
 
-        {/* Siswa List */}
-        <div className="bg-white shadow rounded-lg">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-medium text-gray-900">
-              Daftar Siswa Bimbingan
-            </h3>
-            <p className="mt-1 text-sm text-gray-600">
-              Monitoring siswa yang Anda bimbing
-            </p>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Siswa
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Tempat PKL
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Jurnal
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Aktivitas
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Aksi
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {filteredSiswa.map((siswa) => {
-                  const stats = jurnalStats[siswa.nisn] || {
-                    totalJurnal: 0,
-                    jurnalBulanIni: 0,
-                    lastEntry: null,
-                  };
-                  const activityStatus = getActivityStatus(stats.lastEntry);
-
-                  return (
-                    <tr key={siswa.nisn} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">
-                            {siswa.nama_siswa}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            NISN: {siswa.nisn} • {siswa.kelas}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <Building2 className="h-4 w-4 text-gray-400 mr-2" />
+                    return (
+                      <tr key={siswa.nisn} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap">
                           <div>
-                            <div className="text-sm text-gray-900">
-                              {siswa.nama_dudi}
+                            <div className="text-sm font-medium text-gray-900">
+                              {siswa.nama_siswa}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              NISN: {siswa.nisn} • {siswa.kelas}
                             </div>
                           </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">
-                          Total: {stats.totalJurnal}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          Bulan ini: {stats.jurnalBulanIni}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div
-                          className={`text-sm font-medium ${activityStatus.color}`}
-                        >
-                          {activityStatus.text}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          Terakhir: {formatDate(stats.lastEntry)}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <Link
-                          href={`/guru/siswa/${siswa.nisn}`}
-                          className="text-indigo-600 hover:text-indigo-900 flex items-center"
-                        >
-                          <Eye className="h-4 w-4 mr-1" />
-                          Detail
-                        </Link>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center">
+                            <Building2 className="h-4 w-4 text-gray-400 mr-2" />
+                            <div>
+                              <div className="text-sm text-gray-900">
+                                {siswa.nama_dudi}
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900">
+                            Total: {stats.totalJurnal}
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            Bulan ini: {stats.jurnalBulanIni}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div
+                            className={`text-sm font-medium ${activityStatus.color}`}
+                          >
+                            {activityStatus.text}
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            Terakhir: {formatDate(stats.lastEntry)}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                          <Link
+                            href={`/guru/siswa/${siswa.nisn}`}
+                            className="text-indigo-600 hover:text-indigo-900 flex items-center"
+                          >
+                            <Eye className="h-4 w-4 mr-1" />
+                            Detail
+                          </Link>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
 
-            {filteredSiswa.length === 0 && (
-              <div className="text-center py-12">
-                <Users className="mx-auto h-12 w-12 text-gray-400" />
-                <h3 className="mt-2 text-sm font-medium text-gray-900">
-                  {searchTerm
-                    ? "Tidak ada siswa yang sesuai"
-                    : "Belum ada siswa bimbingan"}
-                </h3>
-                <p className="mt-1 text-sm text-gray-500">
-                  {searchTerm
-                    ? "Coba gunakan kata kunci yang lain"
-                    : "Hubungi admin untuk mendapatkan siswa bimbingan"}
-                </p>
-              </div>
-            )}
+              {filteredSiswa.length === 0 && (
+                <div className="text-center py-12">
+                  <Users className="mx-auto h-12 w-12 text-gray-400" />
+                  <h3 className="mt-2 text-sm font-medium text-gray-900">
+                    {searchTerm
+                      ? "Tidak ada siswa yang sesuai"
+                      : "Belum ada siswa bimbingan"}
+                  </h3>
+                  <p className="mt-1 text-sm text-gray-500">
+                    {searchTerm
+                      ? "Coba gunakan kata kunci yang lain"
+                      : "Hubungi admin untuk mendapatkan siswa bimbingan"}
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      </main>
-    </div>
+        </main>
+      </div>
+    </DashboardLayout>
   );
 }

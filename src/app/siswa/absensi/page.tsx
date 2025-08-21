@@ -29,22 +29,29 @@ const useWIBTime = () => {
     // Initialize with current WIB time to avoid hydration mismatch
     if (typeof window !== "undefined") {
       const now = new Date();
-      const wib = new Date(now.getTime() + 7 * 60 * 60 * 1000);
-      return `${String(wib.getUTCHours()).padStart(2, "0")}:${String(
-        wib.getUTCMinutes()
-      ).padStart(2, "0")}:${String(wib.getUTCSeconds()).padStart(2, "0")}`;
+      return now.toLocaleTimeString("id-ID", {
+        timeZone: "Asia/Jakarta",
+        hour12: false,
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      });
     }
     return "";
   });
 
   const updateTime = () => {
     const now = new Date();
-    const wib = new Date(now.getTime() + 7 * 60 * 60 * 1000);
-    const timeString = `${String(wib.getUTCHours()).padStart(2, "0")}:${String(
-      wib.getUTCMinutes()
-    ).padStart(2, "0")}:${String(wib.getUTCSeconds()).padStart(2, "0")}`;
+    const timeString = now.toLocaleTimeString("id-ID", {
+      timeZone: "Asia/Jakarta",
+      hour12: false,
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
     setCurrentTime(timeString);
-    return wib;
+    // Return proper WIB Date object
+    return new Date(now.toLocaleString("en-US", { timeZone: "Asia/Jakarta" }));
   };
 
   useEffect(() => {
@@ -269,28 +276,31 @@ export default function AbsensiPage() {
 
   const updateCurrentTime = async () => {
     try {
-      // Use consistent WIB calculation like in admin page
-      const nowUTC = new Date();
-      const nowWIB = new Date(nowUTC.getTime() + 7 * 60 * 60 * 1000); // Add 7 hours for WIB
+      // Use proper WIB timezone
+      const now = new Date();
+      const nowWIB = new Date(
+        now.toLocaleString("en-US", { timeZone: "Asia/Jakarta" })
+      );
 
       // Format time for display (HH:MM:SS)
-      const jakartaTime = `${String(nowWIB.getUTCHours()).padStart(
-        2,
-        "0"
-      )}:${String(nowWIB.getUTCMinutes()).padStart(2, "0")}:${String(
-        nowWIB.getUTCSeconds()
-      ).padStart(2, "0")}`;
+      const jakartaTime = now.toLocaleTimeString("id-ID", {
+        timeZone: "Asia/Jakarta",
+        hour12: false,
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      });
 
       // Update state immediately
       setCurrentTime(jakartaTime);
 
       // Get WIB hour for business logic
-      const hour = nowWIB.getUTCHours(); // This is WIB hour since we added 7 hours
+      const hour = nowWIB.getHours(); // Get proper local hour in WIB
       const isLateValue = hour >= 8;
       const isAfter3PMValue = hour >= 15;
 
       console.log("Time check (WIB):", {
-        utc: nowUTC.toISOString(),
+        utc: now.toISOString(),
         wib: nowWIB.toISOString(),
         displayTime: jakartaTime,
         hour,

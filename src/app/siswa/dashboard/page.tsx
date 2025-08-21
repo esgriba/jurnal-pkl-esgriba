@@ -413,7 +413,7 @@ export default function SiswaDashboard() {
                 className="flex items-center p-6 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl text-white group"
               >
                 <div className="bg-white/20 p-3 rounded-xl mr-4 group-hover:bg-white/30">
-                  <Plus className="h-6 w-6 text-white" />
+                  <BookOpen className="h-6 w-6 text-blue-500" />
                 </div>
                 <div>
                   <h3 className="font-bold text-white mb-1">Buat Jurnal</h3>
@@ -471,7 +471,7 @@ export default function SiswaDashboard() {
                 className="flex items-center p-6 bg-gradient-to-r from-purple-500 to-pink-600 rounded-2xl hover:from-purple-600 hover:to-pink-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl text-white group"
               >
                 <div className="bg-white/20 p-3 rounded-xl mr-4 group-hover:bg-white/30">
-                  <Eye className="h-6 w-6 text-white" />
+                  <Eye className="h-6 w-6 text-purple-500" />
                 </div>
                 <div>
                   <h3 className="font-bold text-white mb-1">Lihat Jurnal</h3>
@@ -487,7 +487,7 @@ export default function SiswaDashboard() {
                 className="flex items-center p-6 bg-gradient-to-r from-orange-500 to-red-600 rounded-2xl hover:from-orange-600 hover:to-red-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl text-white group"
               >
                 <div className="bg-white/20 p-3 rounded-xl mr-4 group-hover:bg-white/30">
-                  <User className="h-6 w-6 text-white" />
+                  <User className="h-6 w-6 text-orange-500" />
                 </div>
                 <div>
                   <h3 className="font-bold text-white mb-1">Profil</h3>

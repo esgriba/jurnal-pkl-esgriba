@@ -203,15 +203,15 @@ export default function JurnalListPage() {
                   onClick={() => setShowFilters(!showFilters)}
                   className={`p-3 rounded-xl transition-all duration-200 flex items-center ${
                     hasActiveFilters
-                      ? "bg-white/30 text-white backdrop-blur-sm"
-                      : "bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
+                      ? "bg-white/30 text-blue-500 backdrop-blur-sm"
+                      : "bg-white/20 text-blue-500 hover:bg-white/30 backdrop-blur-sm"
                   }`}
                 >
                   <Filter className="h-5 w-5" />
                 </button>
                 <Link
                   href="/siswa/jurnal/create"
-                  className="bg-white/20 hover:bg-white/30 text-white font-bold px-6 py-3 rounded-xl transition-all duration-200 flex items-center backdrop-blur-sm border border-white/30"
+                  className="bg-white/20 hover:bg-white/30 text-blue-500 font-bold px-6 py-3 rounded-xl transition-all duration-200 flex items-center backdrop-blur-sm border border-white/30"
                 >
                   <Plus className="h-5 w-5 mr-2" />
                   Buat
