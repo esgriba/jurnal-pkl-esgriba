@@ -28,7 +28,7 @@ export function Card({
 
   return (
     <div
-      className={`!bg-white rounded-lg border border-slate-200 ${paddingClasses[padding]} ${shadowClasses[shadow]} ${className}`}
+      className={`bg-gradient-to-br from-white to-slate-50 rounded-xl border border-slate-200 shadow-sm hover:shadow-lg transition-all duration-300 ${paddingClasses[padding]} ${shadowClasses[shadow]} ${className}`}
     >
       {children}
     </div>
@@ -52,7 +52,7 @@ interface CardTitleProps {
 export function CardTitle({ children, className = "" }: CardTitleProps) {
   return (
     <h3
-      className={`text-lg font-semibold text-slate-900 ${className}`}
+      className={`text-lg font-semibold text-slate-800 ${className}`}
     >
       {children}
     </h3>
@@ -66,7 +66,7 @@ interface CardContentProps {
 
 export function CardContent({ children, className = "" }: CardContentProps) {
   return (
-    <div className={`text-slate-700 ${className}`}>
+    <div className={`text-slate-600 ${className}`}>
       {children}
     </div>
   );

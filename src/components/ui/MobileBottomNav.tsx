@@ -167,7 +167,7 @@ export default function MobileBottomNav({ userRole }: MobileBottomNavProps) {
   return (
     <>
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 !bg-white border-t border-slate-200 shadow-lg z-50 md:hidden">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-slate-200 shadow-lg z-50 md:hidden">
         <div className="flex items-center justify-around h-16 max-w-md mx-auto">
           {navItems.map((item) => {
             const Icon = item.icon;
@@ -181,11 +181,11 @@ export default function MobileBottomNav({ userRole }: MobileBottomNavProps) {
                 key={item.id}
                 onClick={() => handleNavigation(item.href)}
                 className={`
-                  flex flex-col items-center justify-center flex-1 h-full px-1 py-1 transition-all duration-200 active:scale-95
+                  relative flex flex-col items-center justify-center flex-1 h-full px-1 py-2 transition-all duration-300 active:scale-95 rounded-lg mx-1
                   ${
                     isActive
-                      ? "text-blue-600 bg-blue-50"
-                      : "text-gray-500 hover:text-gray-700 active:bg-gray-50"
+                      ? "text-white bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg"
+                      : "text-slate-500 hover:text-slate-700 hover:bg-slate-100"
                   }
                 `}
                 style={{
@@ -195,7 +195,7 @@ export default function MobileBottomNav({ userRole }: MobileBottomNavProps) {
                 <div className="relative">
                   <Icon
                     className={`w-5 h-5 mb-1 transition-all duration-200 ${
-                      isActive ? "text-blue-600 scale-110" : "text-gray-500"
+                      isActive ? "text-white" : "text-slate-500"
                     }`}
                   />
                   {item.badge && item.badge > 0 && (
@@ -204,12 +204,12 @@ export default function MobileBottomNav({ userRole }: MobileBottomNavProps) {
                     </span>
                   )}
                   {isActive && (
-                    <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-blue-600 rounded-full"></div>
+                    <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-white rounded-full shadow-sm"></div>
                   )}
                 </div>
                 <span
                   className={`text-xs font-medium transition-all duration-200 ${
-                    isActive ? "text-blue-600" : "text-slate-600"
+                    isActive ? "text-white" : "text-slate-600"
                   }`}
                 >
                   {item.label}

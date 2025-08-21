@@ -195,9 +195,9 @@ export default function ChangePasswordPage() {
 
       {/* Password Update Form */}
       <div className="max-w-2xl mx-auto">
-        <Card className="!bg-white border-slate-200 shadow-lg">
+        <Card className="border-blue-100 bg-gradient-to-br from-white to-blue-50 hover:shadow-xl transition-all duration-300">
           <CardHeader>
-            <CardTitle className="flex items-center !text-slate-900">
+            <CardTitle className="flex items-center text-slate-800">
               <Lock className="h-5 w-5 mr-2 text-blue-600" />
               Ubah Password
             </CardTitle>

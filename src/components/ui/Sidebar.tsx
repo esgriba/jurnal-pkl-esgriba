@@ -281,12 +281,12 @@ export default function Sidebar({ userRole }: SidebarProps) {
 
       {/* Sidebar - Hidden on mobile, visible on desktop */}
       <div
-        className={`fixed left-0 top-0 h-full w-64 !bg-white shadow-lg z-40 transition-transform duration-300 ease-in-out ${
+        className={`fixed left-0 top-0 h-full w-64 bg-white/95 backdrop-blur-sm shadow-xl z-40 transition-transform duration-300 ease-in-out border-r border-slate-200 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } lg:translate-x-0 hidden lg:block`}
       >
         {/* Header */}
-        <div className="p-6 border-b border-slate-200">
+        <div className="p-6 border-b border-slate-200 bg-gradient-to-r from-blue-50 to-indigo-50">
           <h1 className="text-xl font-bold text-slate-800">
             Jurnal PKL
           </h1>
@@ -303,10 +303,10 @@ export default function Sidebar({ userRole }: SidebarProps) {
         </nav>
 
         {/* Footer */}
-        <div className="p-4 border-t border-slate-200">
+        <div className="p-4 border-t border-slate-200 bg-gradient-to-r from-red-50 to-pink-50">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-md transition-colors"
+            className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-100 rounded-lg transition-all duration-200 hover:shadow-sm"
           >
             <LogOut className="h-5 w-5" />
             <span className="font-medium">Logout</span>

@@ -223,9 +223,9 @@ export default function ProfilSiswaPage() {
       {/* Profile Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Personal Information */}
-        <Card className="!bg-white border-slate-200 shadow-lg">
+        <Card className="border-blue-100 bg-gradient-to-br from-white to-blue-50 hover:shadow-xl transition-all duration-300">
           <CardHeader>
-            <CardTitle className="flex items-center !text-slate-900">
+            <CardTitle className="flex items-center text-slate-800">
               <User className="h-5 w-5 mr-2 text-blue-600" />
               Informasi Pribadi
             </CardTitle>
@@ -251,9 +251,9 @@ export default function ProfilSiswaPage() {
         </Card>
 
         {/* Academic Information */}
-        <Card className="!bg-white border-slate-200 shadow-lg">
+        <Card className="border-green-100 bg-gradient-to-br from-white to-green-50 hover:shadow-xl transition-all duration-300">
           <CardHeader>
-            <CardTitle className="flex items-center !text-slate-900">
+            <CardTitle className="flex items-center text-slate-800">
               <GraduationCap className="h-5 w-5 mr-2 text-green-600" />
               Informasi Akademik
             </CardTitle>
@@ -299,9 +299,9 @@ export default function ProfilSiswaPage() {
       </div>
 
       {/* Account Information */}
-      <Card className="mt-6 !bg-white border-slate-200 shadow-lg">
+      <Card className="mt-6 border-purple-100 bg-gradient-to-br from-white to-purple-50 hover:shadow-xl transition-all duration-300">
         <CardHeader>
-          <CardTitle className="flex items-center !text-slate-900">
+          <CardTitle className="flex items-center text-slate-800">
             <User className="h-5 w-5 mr-2 text-purple-600" />
             Informasi Akun
           </CardTitle>
