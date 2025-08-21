@@ -260,7 +260,7 @@ export default function CreateDudiPage() {
                   maxLength={500}
                   value={formData.alamat_dudi}
                   onChange={handleInputChange}
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-900 placeholder:text-gray-400 bg-white"
                   placeholder="Masukkan alamat lengkap DUDI"
                   disabled={isLoading}
                 />
@@ -309,7 +309,7 @@ export default function CreateDudiPage() {
                   maxLength={500}
                   value={formData.lokasi_map}
                   onChange={handleInputChange}
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-900 placeholder:text-gray-400 bg-white"
                   placeholder="Masukkan URL Google Maps atau embed code"
                   disabled={isLoading}
                 />

@@ -391,7 +391,7 @@ export default function CreateJurnalPage() {
                     {...register("deskripsi_kegiatan")}
                     id="deskripsi_kegiatan"
                     rows={5}
-                    className="block w-full px-4 py-3 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 hover:border-green-300 resize-none"
+                    className="block w-full px-4 py-3 border-2 border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 hover:border-green-300 resize-none text-gray-900 placeholder:text-gray-400 bg-white"
                     placeholder="Jelaskan kegiatan yang dilakukan hari ini dengan detail...&#10;&#10;"
                   />
                 </div>
