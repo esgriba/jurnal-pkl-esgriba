@@ -152,44 +152,6 @@ export default function AbsensiPage() {
     !isLocationValid ||
     isAfter3PM;
 
-  // Debug logging for todayAbsensi state changes
-  useEffect(() => {
-    console.log("🎯 todayAbsensi state changed:", {
-      value: todayAbsensi,
-      isNull: todayAbsensi === null,
-      isUndefined: todayAbsensi === undefined,
-      type: typeof todayAbsensi,
-      truthyCheck: !!todayAbsensi,
-      timestamp: new Date().toISOString(),
-    });
-  }, [todayAbsensi]);
-
-  // Debug logging
-  useEffect(() => {
-    console.log("Button disable state:", {
-      isMounted,
-      isSubmitting,
-      isAfter3PM,
-      todayAbsensi: !!todayAbsensi,
-      isLocationValid,
-      coordinates: !!coordinates,
-      location,
-      isButtonDisabled,
-      serverTime: serverTime?.toISOString(),
-      environment: process.env.NODE_ENV,
-    });
-  }, [
-    isMounted,
-    isSubmitting,
-    isAfter3PM,
-    todayAbsensi,
-    isLocationValid,
-    coordinates,
-    location,
-    isButtonDisabled,
-    serverTime,
-  ]);
-
   // Function to get server time from world clock API
   const getServerTime = async (): Promise<Date> => {
     try {
@@ -282,7 +244,6 @@ export default function AbsensiPage() {
 
   useEffect(() => {
     if (siswaData) {
-      console.log("Debug: siswaData changed, force refresh absensi check");
       setTodayAbsensi(null); // Clear existing state first
       checkTodayAbsensi();
       getCurrentLocation();
@@ -1060,23 +1021,13 @@ export default function AbsensiPage() {
         {todayAbsensi ? (
           <div className="mb-6 bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
             <div className="bg-gradient-to-r from-green-500 to-emerald-600 px-6 py-4">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center">
                 <div className="flex items-center">
                   {getStatusIcon(todayAbsensi.status)}
                   <h3 className="text-lg font-semibold text-white ml-3">
                     Absensi Hari Ini
                   </h3>
                 </div>
-                <button
-                  onClick={() => {
-                    console.log("Debug: Force refresh absensi data");
-                    setTodayAbsensi(null);
-                    checkTodayAbsensi();
-                  }}
-                  className="bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded-lg text-sm font-medium transition-all duration-200"
-                >
-                  🔄 Refresh
-                </button>
               </div>
             </div>
             <div className="p-6">
@@ -1335,111 +1286,6 @@ export default function AbsensiPage() {
                   </div>
                 </div>
               </div>
-
-              {/* Debug Panel - Remove in production */}
-              {process.env.NODE_ENV === "development" && (
-                <div className="mt-6 bg-yellow-50 border border-yellow-200 rounded-xl p-4">
-                  <div className="font-semibold text-yellow-800 mb-3">
-                    🔧 Debug Panel & Status:
-                  </div>
-
-                  {/* Current Status Display */}
-                  <div className="mb-4 bg-gray-100 p-3 rounded-lg text-xs">
-                    <div className="grid grid-cols-2 gap-2 text-gray-700">
-                      <div>
-                        <strong>Today Absensi:</strong>{" "}
-                        {todayAbsensi ? "✅ Found" : "❌ Null/Empty"}
-                      </div>
-                      <div>
-                        <strong>Button Disabled:</strong>{" "}
-                        {isButtonDisabled ? "🔒 Yes" : "🔓 No"}
-                      </div>
-                      <div>
-                        <strong>Is Mounted:</strong> {isMounted ? "✅" : "❌"}
-                      </div>
-                      <div>
-                        <strong>Location Valid:</strong>{" "}
-                        {isLocationValid ? "✅" : "❌"}
-                      </div>
-                      <div>
-                        <strong>After 3PM:</strong>{" "}
-                        {isAfter3PM ? "⏰ Yes" : "✅ No"}
-                      </div>
-                      <div>
-                        <strong>Is Submitting:</strong>{" "}
-                        {isSubmitting ? "⏳ Yes" : "✅ No"}
-                      </div>
-                    </div>
-                    <div className="mt-2 pt-2 border-t border-gray-300">
-                      <div>
-                        <strong>Jakarta Date:</strong>{" "}
-                        {new Intl.DateTimeFormat("en-CA", {
-                          timeZone: "Asia/Jakarta",
-                        }).format(new Date())}
-                      </div>
-                      <div>
-                        <strong>Jakarta Time:</strong>{" "}
-                        {new Date().toLocaleString("id-ID", {
-                          timeZone: "Asia/Jakarta",
-                        })}
-                      </div>
-                      {todayAbsensi && (
-                        <div className="text-orange-600 font-medium">
-                          <strong>Found Record:</strong> {todayAbsensi.status}{" "}
-                          on {todayAbsensi.tanggal} at{" "}
-                          {todayAbsensi.jam_absensi}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex flex-wrap gap-2">
-                    <button
-                      onClick={() => {
-                        console.log("🔄 Debug: Manual refresh absensi data");
-                        setTodayAbsensi(null);
-                        checkTodayAbsensi();
-                      }}
-                      className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm"
-                    >
-                      🔄 Force Refresh
-                    </button>
-                    <button
-                      onClick={() => {
-                        console.log("📊 Current states:", {
-                          siswaData,
-                          todayAbsensi,
-                          todayAbsensiIsNull: todayAbsensi === null,
-                          todayAbsensiIsUndefined: todayAbsensi === undefined,
-                          coordinates,
-                          location,
-                          serverTime: serverTime?.toISOString(),
-                          currentJakartaDate: new Intl.DateTimeFormat("en-CA", {
-                            timeZone: "Asia/Jakarta",
-                          }).format(new Date()),
-                          isButtonDisabled,
-                          isLocationValid,
-                          isAfter3PM,
-                          isMounted,
-                          isSubmitting,
-                        });
-                      }}
-                      className="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm"
-                    >
-                      📊 Log All States
-                    </button>
-                    <button
-                      onClick={() => {
-                        console.log("🗑️ Force Clear State");
-                        setTodayAbsensi(null);
-                      }}
-                      className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm"
-                    >
-                      🗑️ Clear State
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </div>
