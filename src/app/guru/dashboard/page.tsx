@@ -128,12 +128,27 @@ export default function GuruDashboard() {
         setRecentJournals(formattedJurnal);
 
         // Fetch today's attendance data
-        const today = new Date().toISOString().split("T")[0];
+        // Use Jakarta timezone consistently like in absensi page
+        const today = new Date();
+        const jakartaDate = new Intl.DateTimeFormat("en-CA", {
+          timeZone: "Asia/Jakarta",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        }).format(today);
+
+        console.log(
+          "Dashboard - Using Jakarta date:",
+          jakartaDate,
+          "UTC source:",
+          today.toISOString()
+        );
+
         const { data: attendanceData, error: attendanceError } = await supabase
           .from("tb_absensi")
           .select("*")
           .in("nisn", nisnList)
-          .eq("tanggal", today);
+          .eq("tanggal", jakartaDate);
 
         if (attendanceError) {
           console.error("Error fetching attendance:", attendanceError);
@@ -143,7 +158,7 @@ export default function GuruDashboard() {
 
         // Calculate stats
         const todayJournals =
-          jurnalData?.filter((j) => j.tanggal === today) || [];
+          jurnalData?.filter((j) => j.tanggal === jakartaDate) || [];
 
         const hadirCount =
           attendanceData?.filter((a) => a.status === "Hadir").length || 0;
@@ -239,7 +254,11 @@ export default function GuruDashboard() {
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2">
                 <Clock className="h-5 w-5" />
-                Absensi Hari Ini ({new Date().toLocaleDateString("id-ID")})
+                Absensi Hari Ini (
+                {new Date().toLocaleDateString("id-ID", {
+                  timeZone: "Asia/Jakarta",
+                })}
+                )
               </CardTitle>
               <Button href="/guru/absensi" variant="outline" size="sm">
                 Lihat Detail

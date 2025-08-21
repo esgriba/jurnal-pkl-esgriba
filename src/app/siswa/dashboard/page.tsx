@@ -174,27 +174,55 @@ export default function SiswaDashboard() {
       setAbsensiCount(absensiCountData || 0);
       console.log("Absensi count:", absensiCountData);
 
-      // Fetch today's attendance
-      const today = new Date().toISOString().split("T")[0];
-      console.log("Fetching attendance for date:", today, "NISN:", siswa.nisn);
+      // Fetch today's attendance using Jakarta timezone
+      const now = new Date();
+
+      // Use Jakarta timezone for date calculation - consistent with absensi page
+      const jakartaToday = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Asia/Jakarta",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      }).format(now);
+
+      console.log("🔍 Dashboard - Fetching attendance for:", {
+        jakartaDate: jakartaToday,
+        utcDate: now.toISOString().split("T")[0],
+        nisn: siswa.nisn,
+        jakartaTime: new Intl.DateTimeFormat("id-ID", {
+          timeZone: "Asia/Jakarta",
+        }).format(now),
+      });
 
       const { data: attendanceData, error: attendanceError } = await supabase
         .from("tb_absensi")
         .select("*")
         .eq("nisn", siswa.nisn)
-        .eq("tanggal", today)
+        .eq("tanggal", jakartaToday)
         .single();
 
       if (attendanceError) {
-        console.log(
-          "No attendance found (expected if not yet checked in):",
-          attendanceError
-        );
+        console.log("📊 Dashboard - No attendance found:", {
+          errorCode: attendanceError.code,
+          searchDate: jakartaToday,
+          isExpected: attendanceError.code === "PGRST116",
+        });
       }
 
       if (!attendanceError && attendanceData) {
-        console.log("Attendance data found:", attendanceData);
+        console.log("✅ Dashboard - Attendance data found:", {
+          status: attendanceData.status,
+          tanggal: attendanceData.tanggal,
+          jam_absensi: attendanceData.jam_absensi,
+          searchedFor: jakartaToday,
+          dateMatch: attendanceData.tanggal === jakartaToday,
+        });
         setTodayAttendance(attendanceData);
+      } else {
+        console.log(
+          "❌ Dashboard - No attendance set (should show Belum Absen)"
+        );
+        setTodayAttendance(null);
       }
 
       setLoading(false);
@@ -316,6 +344,7 @@ export default function SiswaDashboard() {
                 </h1>
                 <p className="text-blue-100 text-lg">
                   {new Date().toLocaleDateString("id-ID", {
+                    timeZone: "Asia/Jakarta",
                     weekday: "long",
                     day: "numeric",
                     month: "long",
@@ -453,7 +482,7 @@ export default function SiswaDashboard() {
                     className={`h-6 w-6 ${
                       todayAttendance
                         ? "text-gray-600 dark:text-gray-600"
-                        : "text-white"
+                        : "text-green-500"
                     }`}
                   />
                 </div>
@@ -587,6 +616,78 @@ export default function SiswaDashboard() {
             )}
           </div>
         </div>
+
+        {/* Debug Panel - Remove in production */}
+        {process.env.NODE_ENV === "development" && (
+          <div className="mt-6 bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+            <div className="font-semibold text-yellow-800 mb-3">
+              🔧 Dashboard Debug Panel:
+            </div>
+
+            <div className="mb-4 bg-gray-100 p-3 rounded-lg text-xs">
+              <div className="grid grid-cols-2 gap-2 text-gray-700">
+                <div>
+                  <strong>Today Attendance:</strong>{" "}
+                  {todayAttendance ? "✅ Found" : "❌ Null/Empty"}
+                </div>
+                <div>
+                  <strong>Is Loading:</strong> {loading ? "⏳ Yes" : "✅ No"}
+                </div>
+                <div>
+                  <strong>Jakarta Date:</strong>{" "}
+                  {new Intl.DateTimeFormat("en-CA", {
+                    timeZone: "Asia/Jakarta",
+                  }).format(new Date())}
+                </div>
+                <div>
+                  <strong>UTC Date:</strong>{" "}
+                  {new Date().toISOString().split("T")[0]}
+                </div>
+              </div>
+              {todayAttendance && (
+                <div className="mt-2 pt-2 border-t border-gray-300 text-orange-600 font-medium">
+                  <strong>Found Record:</strong> {todayAttendance.status} on{" "}
+                  {todayAttendance.tanggal} at {todayAttendance.jam_absensi}
+                </div>
+              )}
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={async () => {
+                  console.log("🔄 Dashboard Debug: Manual refresh");
+                  setTodayAttendance(null);
+                  setLoading(true);
+
+                  // Re-fetch data using the current user
+                  if (user) {
+                    await fetchSiswaData(user.username);
+                  }
+                }}
+                className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm"
+              >
+                🔄 Force Refresh
+              </button>
+              <button
+                onClick={() => {
+                  console.log("📊 Dashboard States:", {
+                    todayAttendance,
+                    todayAttendanceIsNull: todayAttendance === null,
+                    loading,
+                    siswaData,
+                    currentJakartaDate: new Intl.DateTimeFormat("en-CA", {
+                      timeZone: "Asia/Jakarta",
+                    }).format(new Date()),
+                    currentUTCDate: new Date().toISOString().split("T")[0],
+                  });
+                }}
+                className="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm"
+              >
+                📊 Log States
+              </button>
+            </div>
+          </div>
+        )}
       </DashboardLayout>
     </div>
   );

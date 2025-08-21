@@ -152,6 +152,18 @@ export default function AbsensiPage() {
     !isLocationValid ||
     isAfter3PM;
 
+  // Debug logging for todayAbsensi state changes
+  useEffect(() => {
+    console.log("🎯 todayAbsensi state changed:", {
+      value: todayAbsensi,
+      isNull: todayAbsensi === null,
+      isUndefined: todayAbsensi === undefined,
+      type: typeof todayAbsensi,
+      truthyCheck: !!todayAbsensi,
+      timestamp: new Date().toISOString(),
+    });
+  }, [todayAbsensi]);
+
   // Debug logging
   useEffect(() => {
     console.log("Button disable state:", {
@@ -270,6 +282,8 @@ export default function AbsensiPage() {
 
   useEffect(() => {
     if (siswaData) {
+      console.log("Debug: siswaData changed, force refresh absensi check");
+      setTodayAbsensi(null); // Clear existing state first
       checkTodayAbsensi();
       getCurrentLocation();
     }
@@ -391,26 +405,91 @@ export default function AbsensiPage() {
     if (!siswaData) return;
 
     try {
-      // Always get today's date in Jakarta timezone consistently
-      const today = new Date();
+      // Clear previous state first - use functional update to ensure it's cleared
+      console.log("🧹 Clearing previous state...");
+      setTodayAbsensi((prevState) => {
+        console.log("Previous state:", prevState);
+        return null;
+      });
 
-      // Use Intl API to get Jakarta date in YYYY-MM-DD format
-      const jakartaDate = new Intl.DateTimeFormat("en-CA", {
+      // Get current time in Jakarta - use more explicit method
+      const now = new Date();
+
+      // Method 1: Get Jakarta time using toLocaleString then parse
+      const jakartaTimeString = now.toLocaleString("sv-SE", {
+        timeZone: "Asia/Jakarta",
+      }); // sv-SE gives us YYYY-MM-DD HH:mm:ss format
+
+      const jakartaDate1 = jakartaTimeString.split(" ")[0]; // Extract date part
+
+      // Method 2: Create a more explicit Jakarta date calculation
+      const jakartaOffset = 7; // WIB is UTC+7
+      const jakartaTime = new Date(
+        now.getTime() + jakartaOffset * 60 * 60 * 1000
+      );
+
+      // Extract date parts from Jakarta time
+      const year = jakartaTime.getUTCFullYear();
+      const month = String(jakartaTime.getUTCMonth() + 1).padStart(2, "0");
+      const day = String(jakartaTime.getUTCDate()).padStart(2, "0");
+
+      const jakartaDate2 = `${year}-${month}-${day}`;
+
+      // Method 3: Also use Intl API as backup
+      const jakartaDate3 = new Intl.DateTimeFormat("en-CA", {
         timeZone: "Asia/Jakarta",
         year: "numeric",
         month: "2-digit",
         day: "2-digit",
-      }).format(today);
+      }).format(now);
 
-      console.log(
-        "Checking attendance for Jakarta date:",
-        jakartaDate,
-        "NISN:",
-        siswaData.nisn,
-        "Source UTC:",
-        today.toISOString()
-      );
+      // Use Method 1 (sv-SE) as it's most reliable for date extraction
+      const jakartaDate = jakartaDate1;
 
+      // Additional debug: Show what date we're actually looking for
+      const jakartaDateReadable = new Intl.DateTimeFormat("id-ID", {
+        timeZone: "Asia/Jakarta",
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }).format(now);
+
+      console.log("🔍 Checking attendance for:", {
+        finalJakartaDate: jakartaDate,
+        method1_svSE: jakartaDate1,
+        method2_explicit: jakartaDate2,
+        method3_intl: jakartaDate3,
+        jakartaDateReadable,
+        jakartaTimeString,
+        utcDate: now.toISOString().split("T")[0],
+        localDate: now.toLocaleDateString("en-CA"),
+        jakartaHour: new Date().toLocaleString("en-US", {
+          timeZone: "Asia/Jakarta",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+        }),
+        nisn: siswaData.nisn,
+        sourceUTC: now.toISOString(),
+        localTime: now.toString(),
+      });
+
+      // First, let's check ALL attendance records for this student to see what's in the database
+      const { data: allData, error: allError } = await supabase
+        .from("tb_absensi")
+        .select("*")
+        .eq("nisn", siswaData.nisn)
+        .order("tanggal", { ascending: false })
+        .limit(5);
+
+      console.log("📚 Recent attendance records for student:", {
+        nisn: siswaData.nisn,
+        allRecords: allData,
+        allError: allError?.message || "no error",
+      });
+
+      // Now check for today specifically
       const { data, error } = await supabase
         .from("tb_absensi")
         .select("*")
@@ -423,10 +502,60 @@ export default function AbsensiPage() {
         throw error;
       }
 
-      console.log("Today's attendance data:", data);
-      setTodayAbsensi(data);
+      console.log("📊 Query result:", {
+        found: !!data,
+        data: data,
+        errorCode: error?.code || "no error",
+        searchedDate: jakartaDate,
+        searchedDateType: typeof jakartaDate,
+        foundDate: data?.tanggal,
+        foundDateType: typeof data?.tanggal,
+        dateMatch: data?.tanggal === jakartaDate,
+        exactQuery: `nisn='${siswaData.nisn}' AND tanggal='${jakartaDate}'`,
+        // Also check if there are similar dates (off by 1 day)
+        yesterdayJakarta: new Intl.DateTimeFormat("en-CA", {
+          timeZone: "Asia/Jakarta",
+        }).format(new Date(now.getTime() - 24 * 60 * 60 * 1000)),
+        tomorrowJakarta: new Intl.DateTimeFormat("en-CA", {
+          timeZone: "Asia/Jakarta",
+        }).format(new Date(now.getTime() + 24 * 60 * 60 * 1000)),
+      });
+
+      // Additional check: Let's also query without single() to see ALL records for today
+      const { data: allTodayData, error: allTodayError } = await supabase
+        .from("tb_absensi")
+        .select("*")
+        .eq("nisn", siswaData.nisn)
+        .eq("tanggal", jakartaDate);
+
+      console.log("📋 ALL records for today:", {
+        searchDate: jakartaDate,
+        allTodayRecords: allTodayData,
+        count: allTodayData?.length || 0,
+        error: allTodayError?.message || "no error",
+      });
+
+      // Set the result - make sure we explicitly set null if no data
+      const finalData = data || null;
+      console.log("🎯 Setting todayAbsensi to:", {
+        finalData,
+        isNull: finalData === null,
+        isUndefined: finalData === undefined,
+        beforeSet: "will check after setState",
+      });
+
+      // Use functional update to ensure state is set correctly
+      setTodayAbsensi((prevState) => {
+        console.log("setState callback - prevState:", prevState);
+        console.log("setState callback - setting to:", finalData);
+        return finalData;
+      });
+
+      console.log("✅ After setTodayAbsensi called");
     } catch (error) {
-      console.error("Error checking today's absensi:", error);
+      console.error("❌ Error checking today's absensi:", error);
+      // Make sure to set null on error too
+      setTodayAbsensi(null);
     } finally {
       setIsLoading(false);
     }
@@ -748,6 +877,7 @@ export default function AbsensiPage() {
                 </h1>
                 <p className="text-blue-100 text-lg mb-4">
                   {new Date().toLocaleDateString("id-ID", {
+                    timeZone: "Asia/Jakarta",
                     weekday: "long",
                     year: "numeric",
                     month: "long",
@@ -930,11 +1060,23 @@ export default function AbsensiPage() {
         {todayAbsensi ? (
           <div className="mb-6 bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
             <div className="bg-gradient-to-r from-green-500 to-emerald-600 px-6 py-4">
-              <div className="flex items-center">
-                {getStatusIcon(todayAbsensi.status)}
-                <h3 className="text-lg font-semibold text-white ml-3">
-                  Absensi Hari Ini
-                </h3>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  {getStatusIcon(todayAbsensi.status)}
+                  <h3 className="text-lg font-semibold text-white ml-3">
+                    Absensi Hari Ini
+                  </h3>
+                </div>
+                <button
+                  onClick={() => {
+                    console.log("Debug: Force refresh absensi data");
+                    setTodayAbsensi(null);
+                    checkTodayAbsensi();
+                  }}
+                  className="bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded-lg text-sm font-medium transition-all duration-200"
+                >
+                  🔄 Refresh
+                </button>
               </div>
             </div>
             <div className="p-6">
@@ -1193,6 +1335,111 @@ export default function AbsensiPage() {
                   </div>
                 </div>
               </div>
+
+              {/* Debug Panel - Remove in production */}
+              {process.env.NODE_ENV === "development" && (
+                <div className="mt-6 bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+                  <div className="font-semibold text-yellow-800 mb-3">
+                    🔧 Debug Panel & Status:
+                  </div>
+
+                  {/* Current Status Display */}
+                  <div className="mb-4 bg-gray-100 p-3 rounded-lg text-xs">
+                    <div className="grid grid-cols-2 gap-2 text-gray-700">
+                      <div>
+                        <strong>Today Absensi:</strong>{" "}
+                        {todayAbsensi ? "✅ Found" : "❌ Null/Empty"}
+                      </div>
+                      <div>
+                        <strong>Button Disabled:</strong>{" "}
+                        {isButtonDisabled ? "🔒 Yes" : "🔓 No"}
+                      </div>
+                      <div>
+                        <strong>Is Mounted:</strong> {isMounted ? "✅" : "❌"}
+                      </div>
+                      <div>
+                        <strong>Location Valid:</strong>{" "}
+                        {isLocationValid ? "✅" : "❌"}
+                      </div>
+                      <div>
+                        <strong>After 3PM:</strong>{" "}
+                        {isAfter3PM ? "⏰ Yes" : "✅ No"}
+                      </div>
+                      <div>
+                        <strong>Is Submitting:</strong>{" "}
+                        {isSubmitting ? "⏳ Yes" : "✅ No"}
+                      </div>
+                    </div>
+                    <div className="mt-2 pt-2 border-t border-gray-300">
+                      <div>
+                        <strong>Jakarta Date:</strong>{" "}
+                        {new Intl.DateTimeFormat("en-CA", {
+                          timeZone: "Asia/Jakarta",
+                        }).format(new Date())}
+                      </div>
+                      <div>
+                        <strong>Jakarta Time:</strong>{" "}
+                        {new Date().toLocaleString("id-ID", {
+                          timeZone: "Asia/Jakarta",
+                        })}
+                      </div>
+                      {todayAbsensi && (
+                        <div className="text-orange-600 font-medium">
+                          <strong>Found Record:</strong> {todayAbsensi.status}{" "}
+                          on {todayAbsensi.tanggal} at{" "}
+                          {todayAbsensi.jam_absensi}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      onClick={() => {
+                        console.log("🔄 Debug: Manual refresh absensi data");
+                        setTodayAbsensi(null);
+                        checkTodayAbsensi();
+                      }}
+                      className="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-sm"
+                    >
+                      🔄 Force Refresh
+                    </button>
+                    <button
+                      onClick={() => {
+                        console.log("📊 Current states:", {
+                          siswaData,
+                          todayAbsensi,
+                          todayAbsensiIsNull: todayAbsensi === null,
+                          todayAbsensiIsUndefined: todayAbsensi === undefined,
+                          coordinates,
+                          location,
+                          serverTime: serverTime?.toISOString(),
+                          currentJakartaDate: new Intl.DateTimeFormat("en-CA", {
+                            timeZone: "Asia/Jakarta",
+                          }).format(new Date()),
+                          isButtonDisabled,
+                          isLocationValid,
+                          isAfter3PM,
+                          isMounted,
+                          isSubmitting,
+                        });
+                      }}
+                      className="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm"
+                    >
+                      📊 Log All States
+                    </button>
+                    <button
+                      onClick={() => {
+                        console.log("🗑️ Force Clear State");
+                        setTodayAbsensi(null);
+                      }}
+                      className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm"
+                    >
+                      🗑️ Clear State
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -56,9 +56,16 @@ export default function GuruAbsensiPage() {
   const [user, setUser] = useState<UserData | null>(null);
   const [attendanceData, setAttendanceData] = useState<AttendanceData[]>([]);
   const [siswaList, setSiswaList] = useState<SiswaData[]>([]);
-  const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().split("T")[0]
-  );
+  const [selectedDate, setSelectedDate] = useState(() => {
+    // Use Jakarta timezone consistently
+    const today = new Date();
+    return new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Asia/Jakarta",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(today);
+  });
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [isLoading, setIsLoading] = useState(true);
   const [stats, setStats] = useState({
@@ -401,8 +408,8 @@ export default function GuruAbsensiPage() {
                         <Clock className="h-4 w-4" />
                         <span>{attendance.jam_absensi}</span>
                       </div>
-                      <LocationLink 
-                        locationStr={attendance.lokasi} 
+                      <LocationLink
+                        locationStr={attendance.lokasi}
                         showIcon={false}
                         showFullAddress={false}
                         className="truncate"
