@@ -195,10 +195,10 @@ export default function ChangePasswordPage() {
 
       {/* Password Update Form */}
       <div className="max-w-2xl mx-auto">
-        <Card>
+        <Card className="!bg-white border-slate-200 shadow-lg">
           <CardHeader>
-            <CardTitle className="flex items-center">
-              <Lock className="h-5 w-5 mr-2" />
+            <CardTitle className="flex items-center !text-slate-900">
+              <Lock className="h-5 w-5 mr-2 text-blue-600" />
               Ubah Password
             </CardTitle>
           </CardHeader>
@@ -219,7 +219,7 @@ export default function ChangePasswordPage() {
             <div className="space-y-6">
               {/* Current Password */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-slate-800 mb-2">
                   Password Saat Ini
                 </label>
                 <div className="relative">
@@ -232,7 +232,7 @@ export default function ChangePasswordPage() {
                         currentPassword: e.target.value,
                       })
                     }
-                    className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 placeholder:text-gray-400 bg-white"
                     placeholder="Masukkan password saat ini"
                     required
                   />
@@ -252,7 +252,7 @@ export default function ChangePasswordPage() {
 
               {/* New Password */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-slate-800 mb-2">
                   Password Baru
                 </label>
                 <div className="relative">
@@ -265,7 +265,7 @@ export default function ChangePasswordPage() {
                         newPassword: e.target.value,
                       })
                     }
-                    className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 placeholder:text-gray-400 bg-white"
                     placeholder="Masukkan password baru"
                     minLength={6}
                     required
@@ -282,12 +282,12 @@ export default function ChangePasswordPage() {
                     )}
                   </button>
                 </div>
-                <p className="mt-1 text-xs text-gray-500">Minimal 6 karakter</p>
+                <p className="mt-1 text-xs text-slate-600">Minimal 6 karakter</p>
               </div>
 
               {/* Confirm Password */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-slate-800 mb-2">
                   Konfirmasi Password Baru
                 </label>
                 <div className="relative">
@@ -300,7 +300,7 @@ export default function ChangePasswordPage() {
                         confirmPassword: e.target.value,
                       })
                     }
-                    className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 placeholder:text-gray-400 bg-white"
                     placeholder="Konfirmasi password baru"
                     required
                   />

@@ -161,10 +161,10 @@ export default function ProfilSiswaPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading profile data...</p>
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-center bg-white p-8 rounded-xl shadow-lg">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-slate-800 font-medium">Loading profile data...</p>
         </div>
       </div>
     );
@@ -172,11 +172,11 @@ export default function ProfilSiswaPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-center bg-white p-8 rounded-xl shadow-lg">
           <div className="text-red-600 text-6xl mb-4">⚠️</div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Error</h2>
-          <p className="text-gray-600 mb-4">{error}</p>
+          <h2 className="text-2xl font-bold text-slate-900 mb-2">Error</h2>
+          <p className="text-slate-700 mb-4 font-medium">{error}</p>
           <Button
             onClick={() => router.push("/siswa/dashboard")}
             variant="primary"
@@ -190,10 +190,10 @@ export default function ProfilSiswaPage() {
 
   if (!user || !siswaData) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading profile data...</p>
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-center bg-white p-8 rounded-xl shadow-lg">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-slate-800 font-medium">Loading profile data...</p>
         </div>
       </div>
     );
@@ -214,8 +214,8 @@ export default function ProfilSiswaPage() {
             Kembali
           </Button>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Profil Siswa</h1>
-            <p className="text-gray-600">Informasi data diri dan akademik</p>
+            <h1 className="text-2xl font-bold text-slate-900">Profil Siswa</h1>
+            <p className="text-slate-700 font-medium">Informasi data diri dan akademik</p>
           </div>
         </div>
       </div>
@@ -223,75 +223,75 @@ export default function ProfilSiswaPage() {
       {/* Profile Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Personal Information */}
-        <Card>
+        <Card className="!bg-white border-slate-200 shadow-lg">
           <CardHeader>
-            <CardTitle className="flex items-center">
-              <User className="h-5 w-5 mr-2" />
+            <CardTitle className="flex items-center !text-slate-900">
+              <User className="h-5 w-5 mr-2 text-blue-600" />
               Informasi Pribadi
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-slate-800 mb-1">
                   Nama Lengkap
                 </label>
-                <p className="text-gray-900 font-medium">
+                <p className="text-slate-900 font-semibold text-base">
                   {siswaData.nama_siswa}
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-slate-800 mb-1">
                   NISN
                 </label>
-                <p className="text-gray-900">{siswaData.nisn}</p>
+                <p className="text-slate-900 font-medium text-base">{siswaData.nisn}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Academic Information */}
-        <Card>
+        <Card className="!bg-white border-slate-200 shadow-lg">
           <CardHeader>
-            <CardTitle className="flex items-center">
-              <GraduationCap className="h-5 w-5 mr-2" />
+            <CardTitle className="flex items-center !text-slate-900">
+              <GraduationCap className="h-5 w-5 mr-2 text-green-600" />
               Informasi Akademik
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-slate-800 mb-1">
                   Kelas
                 </label>
-                <p className="text-gray-900 font-medium">{siswaData.kelas}</p>
+                <p className="text-slate-900 font-semibold text-base">{siswaData.kelas}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-slate-800 mb-1">
                   <Calendar className="h-4 w-4 inline mr-1" />
                   Tahun Pelajaran
                 </label>
-                <p className="text-gray-900">{siswaData.tahun_pelajaran}</p>
+                <p className="text-slate-900 font-medium text-base">{siswaData.tahun_pelajaran}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-slate-800 mb-1">
                   Semester
                 </label>
-                <p className="text-gray-900">{siswaData.semester}</p>
+                <p className="text-slate-900 font-medium text-base">{siswaData.semester}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-slate-800 mb-1">
                   <Building className="h-4 w-4 inline mr-1" />
                   DUDI (Dunia Usaha/Dunia Industri)
                 </label>
-                <p className="text-gray-900">{siswaData.nama_dudi}</p>
+                <p className="text-slate-900 font-medium text-base">{siswaData.nama_dudi}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-slate-800 mb-1">
                   <User className="h-4 w-4 inline mr-1" />
                   Guru Pembimbing
                 </label>
-                <p className="text-gray-900">{siswaData.nama_guru}</p>
+                <p className="text-slate-900 font-medium text-base">{siswaData.nama_guru}</p>
               </div>
             </div>
           </CardContent>
@@ -299,23 +299,23 @@ export default function ProfilSiswaPage() {
       </div>
 
       {/* Account Information */}
-      <Card className="mt-6">
+      <Card className="mt-6 !bg-white border-slate-200 shadow-lg">
         <CardHeader>
-          <CardTitle className="flex items-center">
-            <User className="h-5 w-5 mr-2" />
+          <CardTitle className="flex items-center !text-slate-900">
+            <User className="h-5 w-5 mr-2 text-purple-600" />
             Informasi Akun
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-slate-800 mb-1">
                 Username
               </label>
-              <p className="text-gray-900">{user.username}</p>
+              <p className="text-slate-900 font-medium text-base">{user.username}</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-slate-800 mb-1">
                 Role
               </label>
               <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
