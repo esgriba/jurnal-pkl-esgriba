@@ -243,7 +243,7 @@ export default function LoginPage() {
                         {...register("username")}
                         type="text"
                         id="username"
-                        className="block w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
+                        className="block w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 !bg-white text-slate-900"
                         placeholder="Masukkan username"
                       />
                     </div>
@@ -270,7 +270,7 @@ export default function LoginPage() {
                         {...register("password")}
                         type={showPassword ? "text" : "password"}
                         id="password"
-                        className="block w-full pl-12 pr-12 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
+                        className="block w-full pl-12 pr-12 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 !bg-white text-slate-900"
                         placeholder="Masukkan password"
                       />
                       <button

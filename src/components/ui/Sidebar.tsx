@@ -232,7 +232,7 @@ export default function Sidebar({ userRole }: SidebarProps) {
             )}
           </button>
           {isExpanded && (
-            <div className="bg-gray-50 dark:bg-gray-900">
+            <div className="!bg-slate-50">
               {item.children
                 ?.filter((child) => child.roles?.includes(userRole))
                 .map((child) => renderMenuItem(child, depth + 1))}
@@ -250,8 +250,8 @@ export default function Sidebar({ userRole }: SidebarProps) {
           depth > 0 ? "pl-8" : ""
         } ${
           isActive
-            ? "bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 border-r-2 border-blue-600"
-            : ""
+            ? "bg-blue-100 text-blue-600 border-r-2 border-blue-600"
+            : "text-slate-700 hover:bg-slate-100"
         }`}
         onClick={() => setIsOpen(false)}
       >
@@ -266,9 +266,9 @@ export default function Sidebar({ userRole }: SidebarProps) {
       {/* Mobile menu button - Hidden when bottom nav is available */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-md bg-white dark:bg-gray-800 shadow-lg hidden"
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-md !bg-white shadow-lg hidden"
       >
-        {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        {isOpen ? <X className="h-6 w-6 text-slate-800" /> : <Menu className="h-6 w-6 text-slate-800" />}
       </button>
 
       {/* Overlay for mobile */}
@@ -281,16 +281,16 @@ export default function Sidebar({ userRole }: SidebarProps) {
 
       {/* Sidebar - Hidden on mobile, visible on desktop */}
       <div
-        className={`fixed left-0 top-0 h-full w-64 bg-white dark:bg-gray-900 shadow-lg z-40 transition-transform duration-300 ease-in-out ${
+        className={`fixed left-0 top-0 h-full w-64 !bg-white shadow-lg z-40 transition-transform duration-300 ease-in-out ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } lg:translate-x-0 hidden lg:block`}
       >
         {/* Header */}
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-          <h1 className="text-xl font-bold text-gray-800 dark:text-white">
+        <div className="p-6 border-b border-slate-200">
+          <h1 className="text-xl font-bold text-slate-800">
             Jurnal PKL
           </h1>
-          <p className="text-sm text-gray-600 dark:text-gray-400 capitalize">
+          <p className="text-sm text-slate-600 capitalize">
             {userRole} Dashboard
           </p>
         </div>
@@ -303,10 +303,10 @@ export default function Sidebar({ userRole }: SidebarProps) {
         </nav>
 
         {/* Footer */}
-        <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="p-4 border-t border-slate-200">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors"
+            className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-md transition-colors"
           >
             <LogOut className="h-5 w-5" />
             <span className="font-medium">Logout</span>

@@ -28,7 +28,7 @@ export function Card({
 
   return (
     <div
-      className={`bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 ${paddingClasses[padding]} ${shadowClasses[shadow]} ${className}`}
+      className={`!bg-white rounded-lg border border-slate-200 ${paddingClasses[padding]} ${shadowClasses[shadow]} ${className}`}
     >
       {children}
     </div>
@@ -52,7 +52,7 @@ interface CardTitleProps {
 export function CardTitle({ children, className = "" }: CardTitleProps) {
   return (
     <h3
-      className={`text-lg font-semibold text-gray-900 dark:text-white ${className}`}
+      className={`text-lg font-semibold text-slate-900 ${className}`}
     >
       {children}
     </h3>
@@ -66,7 +66,7 @@ interface CardContentProps {
 
 export function CardContent({ children, className = "" }: CardContentProps) {
   return (
-    <div className={`text-gray-600 dark:text-gray-300 ${className}`}>
+    <div className={`text-slate-700 ${className}`}>
       {children}
     </div>
   );
@@ -103,10 +103,10 @@ export function StatCard({
     <Card className="hover:shadow-lg transition-shadow duration-200">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+          <p className="text-sm font-medium text-slate-600">
             {title}
           </p>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">
+          <p className="text-2xl font-bold text-slate-900">
             {value}
           </p>
           {trend && (

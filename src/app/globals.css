@@ -98,10 +98,49 @@ body {
   }
 }
 
-/* Smooth transitions */
+/* Force light theme for entire application */
 * {
   transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out,
     color 0.2s ease-in-out;
+}
+
+/* Override dark mode - force light theme */
+html, body {
+  background-color: #f8fafc !important; /* slate-50 */
+  color: #1e293b !important; /* slate-800 */
+}
+
+/* Force light background for all major containers */
+.bg-gray-50, .bg-slate-50, .bg-white {
+  background-color: #f8fafc !important; /* slate-50 */
+}
+
+.bg-gray-100, .bg-slate-100 {
+  background-color: #f1f5f9 !important; /* slate-100 */
+}
+
+/* Card and container backgrounds */
+[class*="bg-white"], [class*="bg-gray"], [class*="bg-slate"] {
+  background-color: #ffffff !important; /* white */
+}
+
+/* Dark mode overrides - disable dark mode completely */
+@media (prefers-color-scheme: dark) {
+  * {
+    background-color: unset !important;
+    color: unset !important;
+  }
+  
+  html, body {
+    background-color: #f8fafc !important; /* slate-50 */
+    color: #1e293b !important; /* slate-800 */
+  }
+  
+  /* Force light theme for cards */
+  [class*="dark:bg-"], [class*="dark:text-"] {
+    background-color: #ffffff !important;
+    color: #1e293b !important;
+  }
 }
 
 /* Form input styling - ensure text is always visible */
