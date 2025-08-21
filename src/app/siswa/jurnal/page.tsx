@@ -181,17 +181,18 @@ export default function JurnalListPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <DashboardLayout userRole="siswa">
-        {/* iOS Style Clean Header */}
-        <div className="bg-white border-b border-gray-200 mb-8">
-          <div className="px-6 py-8">
+        {/* Hero Header Section */}
+        <div className="mb-8 bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-600 rounded-3xl shadow-2xl text-white overflow-hidden relative">
+          <div className="absolute inset-0 bg-black/10"></div>
+          <div className="relative px-6 py-8 sm:px-8">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-semibold text-gray-900 tracking-tight">
-                  Jurnal
+                <h1 className="text-3xl lg:text-4xl font-bold mb-2">
+                  Jurnal PKL 📚
                 </h1>
-                <p className="mt-1 text-gray-600 font-medium">
+                <p className="text-blue-100 text-lg">
                   {filteredJournals.length}{" "}
                   {filteredJournals.length === 1 ? "jurnal" : "jurnal"}
                   {hasActiveFilters && ` dari ${journals.length} total`}
@@ -200,17 +201,17 @@ export default function JurnalListPage() {
               <div className="flex items-center space-x-3">
                 <button
                   onClick={() => setShowFilters(!showFilters)}
-                  className={`p-3 rounded-lg transition-colors duration-200 flex items-center ${
+                  className={`p-3 rounded-xl transition-all duration-200 flex items-center ${
                     hasActiveFilters
-                      ? "bg-blue-100 text-blue-700"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      ? "bg-white/30 text-white backdrop-blur-sm"
+                      : "bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
                   }`}
                 >
                   <Filter className="h-5 w-5" />
                 </button>
                 <Link
                   href="/siswa/jurnal/create"
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-lg transition-colors duration-200 flex items-center"
+                  className="bg-white/20 hover:bg-white/30 text-white font-bold px-6 py-3 rounded-xl transition-all duration-200 flex items-center backdrop-blur-sm border border-white/30"
                 >
                   <Plus className="h-5 w-5 mr-2" />
                   Buat
@@ -230,19 +231,19 @@ export default function JurnalListPage() {
               placeholder="Cari jurnal..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-12 pr-4 py-3 bg-white/80 backdrop-blur-sm border border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
             />
           </div>
 
           {/* Filter Panel */}
           {showFilters && (
-            <div className="bg-white border border-gray-200 rounded-lg p-6 mb-4">
+            <div className="bg-white/80 backdrop-blur-sm border border-white/30 rounded-2xl p-6 mb-6 shadow-xl">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-medium text-gray-900">Filter</h3>
+                <h3 className="text-lg font-bold text-gray-900">Filter</h3>
                 {hasActiveFilters && (
                   <button
                     onClick={clearFilters}
-                    className="text-blue-600 hover:text-blue-700 font-medium flex items-center"
+                    className="text-purple-600 hover:text-purple-700 font-bold flex items-center"
                   >
                     <X className="h-4 w-4 mr-1" />
                     Hapus Filter
@@ -253,13 +254,13 @@ export default function JurnalListPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Year Filter */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-bold text-gray-700 mb-2">
                     Tahun
                   </label>
                   <select
                     value={selectedYear}
                     onChange={(e) => setSelectedYear(e.target.value)}
-                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 bg-white/80 border border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   >
                     <option value="">Semua Tahun</option>
                     {availableYears.map((year) => (
@@ -278,7 +279,7 @@ export default function JurnalListPage() {
                   <select
                     value={selectedMonth}
                     onChange={(e) => setSelectedMonth(e.target.value)}
-                    className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3 py-2 bg-white/80 border border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     disabled={!selectedYear}
                   >
                     <option value="">Semua Bulan</option>
@@ -305,12 +306,12 @@ export default function JurnalListPage() {
         <div className="px-6">
           {filteredJournals.length === 0 ? (
             <div className="text-center py-20">
-              <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
-                <Calendar className="h-12 w-12 text-gray-400" />
+              <div className="mx-auto w-24 h-24 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mb-6 shadow-lg">
+                <Calendar className="h-12 w-12 text-white" />
               </div>
               {hasActiveFilters ? (
                 <>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">
                     Tidak Ada Jurnal Ditemukan
                   </h3>
                   <p className="text-gray-600 mb-8 max-w-sm mx-auto">
@@ -318,7 +319,7 @@ export default function JurnalListPage() {
                   </p>
                   <button
                     onClick={clearFilters}
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-lg transition-colors duration-200 inline-flex items-center"
+                    className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-bold px-6 py-3 rounded-xl transition-all duration-200 inline-flex items-center shadow-lg hover:shadow-xl"
                   >
                     <X className="h-5 w-5 mr-2" />
                     Hapus Filter
@@ -326,7 +327,7 @@ export default function JurnalListPage() {
                 </>
               ) : (
                 <>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">
                     Belum Ada Jurnal
                   </h3>
                   <p className="text-gray-600 mb-8 max-w-sm mx-auto">
@@ -335,7 +336,7 @@ export default function JurnalListPage() {
                   </p>
                   <Link
                     href="/siswa/jurnal/create"
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-lg transition-colors duration-200 inline-flex items-center"
+                    className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold px-6 py-3 rounded-xl transition-all duration-200 inline-flex items-center shadow-lg hover:shadow-xl"
                   >
                     <Plus className="h-5 w-5 mr-2" />
                     Buat Jurnal Pertama
@@ -344,17 +345,17 @@ export default function JurnalListPage() {
               )}
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-6">
               {filteredJournals.map((journal) => (
                 <div
                   key={journal.id_jurnal}
-                  className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-sm transition-shadow duration-200"
+                  className="bg-white/80 backdrop-blur-sm border border-white/30 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]"
                 >
                   <div className="p-6">
                     <div className="flex items-start justify-between">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center mb-3">
-                          <span className="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+                          <span className="text-sm font-bold text-white bg-gradient-to-r from-indigo-500 to-purple-600 px-4 py-2 rounded-xl shadow-lg">
                             {format(parseISO(journal.tanggal), "dd MMM yyyy", {
                               locale: id,
                             })}
@@ -366,13 +367,13 @@ export default function JurnalListPage() {
                             </span>
                           )}
                         </div>
-                        <h3 className="text-lg font-medium text-gray-900 mb-2 line-clamp-2">
+                        <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2">
                           {journal.deskripsi_kegiatan}
                         </h3>
                         <div className="space-y-2">
                           {journal.evadir_personal && (
                             <div className="text-sm text-gray-600">
-                              <span className="font-medium">
+                              <span className="font-bold">
                                 Evaluasi Personal:
                               </span>{" "}
                               <span className="text-gray-800">
@@ -382,7 +383,7 @@ export default function JurnalListPage() {
                           )}
                           {journal.evadir_sosial && (
                             <div className="text-sm text-gray-600">
-                              <span className="font-medium">
+                              <span className="font-bold">
                                 Evaluasi Sosial:
                               </span>{" "}
                               <span className="text-gray-800">
@@ -395,7 +396,7 @@ export default function JurnalListPage() {
                       <div className="ml-6 flex-shrink-0">
                         <Link
                           href={`/siswa/jurnal/${journal.id_jurnal}`}
-                          className="text-blue-600 hover:text-blue-700 p-2 rounded-lg hover:bg-blue-50 transition-colors duration-200 inline-flex items-center"
+                          className="text-white bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 p-3 rounded-xl transition-all duration-200 inline-flex items-center shadow-lg hover:shadow-xl"
                         >
                           <Eye className="h-5 w-5" />
                         </Link>

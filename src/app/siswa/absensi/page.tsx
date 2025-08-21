@@ -17,7 +17,48 @@ import DashboardLayout from "@/components/ui/DashboardLayout";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import { showSuccess, showError } from "@/lib/sweetAlert";
-import { getAddressFromCoordinates, isValidCoordinate, formatCoordinates } from "@/lib/geocoding";
+import {
+  getAddressFromCoordinates,
+  isValidCoordinate,
+  formatCoordinates,
+} from "@/lib/geocoding";
+
+// Custom hook untuk menangani waktu WIB
+const useWIBTime = () => {
+  const [currentTime, setCurrentTime] = useState<string>(() => {
+    // Initialize with current WIB time to avoid hydration mismatch
+    if (typeof window !== "undefined") {
+      const now = new Date();
+      const wib = new Date(now.getTime() + 7 * 60 * 60 * 1000);
+      return `${String(wib.getUTCHours()).padStart(2, "0")}:${String(
+        wib.getUTCMinutes()
+      ).padStart(2, "0")}:${String(wib.getUTCSeconds()).padStart(2, "0")}`;
+    }
+    return "";
+  });
+
+  const updateTime = () => {
+    const now = new Date();
+    const wib = new Date(now.getTime() + 7 * 60 * 60 * 1000);
+    const timeString = `${String(wib.getUTCHours()).padStart(2, "0")}:${String(
+      wib.getUTCMinutes()
+    ).padStart(2, "0")}:${String(wib.getUTCSeconds()).padStart(2, "0")}`;
+    setCurrentTime(timeString);
+    return wib;
+  };
+
+  useEffect(() => {
+    // Update immediately
+    updateTime();
+
+    // Update every second
+    const interval = setInterval(updateTime, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return { currentTime, updateTime };
+};
 
 interface UserData {
   id: number;
@@ -67,7 +108,17 @@ export default function AbsensiPage() {
     lat: number;
     lng: number;
   } | null>(null);
-  const [currentTime, setCurrentTime] = useState<string>("");
+  const [currentTime, setCurrentTime] = useState<string>(() => {
+    // Initialize with current WIB time to avoid hydration mismatch
+    if (typeof window !== "undefined") {
+      const now = new Date();
+      const wib = new Date(now.getTime() + 7 * 60 * 60 * 1000);
+      return `${String(wib.getUTCHours()).padStart(2, "0")}:${String(
+        wib.getUTCMinutes()
+      ).padStart(2, "0")}:${String(wib.getUTCSeconds()).padStart(2, "0")}`;
+    }
+    return "";
+  });
   const [serverTime, setServerTime] = useState<Date | null>(null);
   const [isLate, setIsLate] = useState(false);
   const [isAfter3PM, setIsAfter3PM] = useState(false);
@@ -187,10 +238,12 @@ export default function AbsensiPage() {
 
     setUser(parsedUser);
     fetchSiswaData(parsedUser.username);
+
+    // Initial time update - call immediately when component mounts
     updateCurrentTime();
 
-    // Update time every minute
-    const timeInterval = setInterval(updateCurrentTime, 60000);
+    // Update time every second for better UX
+    const timeInterval = setInterval(updateCurrentTime, 1000);
 
     return () => clearInterval(timeInterval);
   }, [router]);
@@ -209,7 +262,7 @@ export default function AbsensiPage() {
       const timeoutId = setTimeout(() => {
         fetchLocationAddress(coordinates.lat, coordinates.lng);
       }, 1000);
-      
+
       return () => clearTimeout(timeoutId);
     }
   }, [coordinates]);
@@ -228,6 +281,7 @@ export default function AbsensiPage() {
         nowWIB.getUTCSeconds()
       ).padStart(2, "0")}`;
 
+      // Update state immediately
       setCurrentTime(jakartaTime);
 
       // Get WIB hour for business logic
@@ -242,6 +296,7 @@ export default function AbsensiPage() {
         hour,
         isLateValue,
         isAfter3PMValue,
+        currentTime: jakartaTime,
       });
 
       setIsLate(isLateValue);
@@ -260,6 +315,7 @@ export default function AbsensiPage() {
       ).padStart(2, "0")}`;
 
       setCurrentTime(fallbackTime);
+      console.log("Using fallback time:", fallbackTime);
 
       const hour = fallbackWIB.getUTCHours();
       setIsLate(hour >= 8);
@@ -358,9 +414,9 @@ export default function AbsensiPage() {
       const options = {
         enableHighAccuracy: true,
         timeout: 10000, // 10 seconds timeout
-        maximumAge: 60000 // Accept cached location up to 1 minute old
+        maximumAge: 60000, // Accept cached location up to 1 minute old
       };
-      
+
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
@@ -372,8 +428,8 @@ export default function AbsensiPage() {
         (error) => {
           console.error("Error getting location:", error);
           let errorMessage = "Lokasi tidak tersedia";
-          
-          switch(error.code) {
+
+          switch (error.code) {
             case error.PERMISSION_DENIED:
               errorMessage = "Akses lokasi ditolak";
               break;
@@ -384,7 +440,7 @@ export default function AbsensiPage() {
               errorMessage = "Timeout mendapatkan lokasi";
               break;
           }
-          
+
           setLocation(errorMessage);
           setLocationAddress(errorMessage);
         },
@@ -474,17 +530,17 @@ export default function AbsensiPage() {
       });
 
       const absensiData = {
-        nisn: siswaData.nisn?.substring(0, 12) || '', // Limit to 12 chars
-        nama_siswa: siswaData.nama_siswa?.substring(0, 100) || '',
-        kelas: siswaData.kelas?.substring(0, 25) || '',
-        lokasi: location?.substring(0, 100) || '',
-        id_dudi: siswaData.id_dudi?.substring(0, 25) || '', // Limit to 25 chars
-        nama_dudi: siswaData.nama_dudi?.substring(0, 200) || '',
+        nisn: siswaData.nisn?.substring(0, 12) || "", // Limit to 12 chars
+        nama_siswa: siswaData.nama_siswa?.substring(0, 100) || "",
+        kelas: siswaData.kelas?.substring(0, 25) || "",
+        lokasi: location?.substring(0, 100) || "",
+        id_dudi: siswaData.id_dudi?.substring(0, 25) || "", // Limit to 25 chars
+        nama_dudi: siswaData.nama_dudi?.substring(0, 200) || "",
         tanggal: jakartaDate,
         status: status,
         keterangan: isLate && status === "Hadir" ? "Terlambat" : null,
-        id_guru: siswaData.id_guru?.substring(0, 100) || '',
-        nama_guru: siswaData.nama_guru?.substring(0, 100) || '',
+        id_guru: siswaData.id_guru?.substring(0, 100) || "",
+        nama_guru: siswaData.nama_guru?.substring(0, 100) || "",
         jam_absensi: jakartaTimeForDB, // Use Jakarta time format
       };
 
@@ -584,9 +640,9 @@ export default function AbsensiPage() {
                     day: "numeric",
                   })}
                 </p>
-                <div className="inline-flex items-center px-4 py-2 rounded-xl bg-white/20 backdrop-blur-sm border border-white/30">
-                  <Clock className="h-5 w-5 mr-2" />
-                  <span className="font-semibold">
+                <div className="inline-flex items-center px-4 py-2 rounded-xl bg-black/30 backdrop-blur-sm border border-white/30">
+                  <Clock className="h-5 w-5 mr-2 text-white" />
+                  <span className="font-semibold text-white drop-shadow-lg">
                     {isAfter3PM
                       ? "Waktu absensi telah berakhir"
                       : "Waktu absensi tersedia hingga 15:00 WIB"}
@@ -594,9 +650,24 @@ export default function AbsensiPage() {
                 </div>
               </div>
               <div className="lg:ml-8 mt-6 lg:mt-0">
-                <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-6 border border-white/30">
+                <div className="bg-black/30 backdrop-blur-sm rounded-2xl p-6 border border-white/30">
                   <div className="text-center">
-                    <div className="text-4xl font-bold mb-1">{currentTime}</div>
+                    <div className="text-4xl font-bold mb-1 text-white drop-shadow-lg">
+                      {currentTime ||
+                        (() => {
+                          const now = new Date();
+                          const wib = new Date(
+                            now.getTime() + 7 * 60 * 60 * 1000
+                          );
+                          return `${String(wib.getUTCHours()).padStart(
+                            2,
+                            "0"
+                          )}:${String(wib.getUTCMinutes()).padStart(
+                            2,
+                            "0"
+                          )}:${String(wib.getUTCSeconds()).padStart(2, "0")}`;
+                        })()}
+                    </div>
                     <div className="text-blue-100">Waktu Sekarang (WIB)</div>
                   </div>
                 </div>

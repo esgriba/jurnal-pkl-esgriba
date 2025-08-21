@@ -164,7 +164,9 @@ export default function ProfilSiswaPage() {
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="text-center bg-white p-8 rounded-xl shadow-lg">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-slate-800 font-medium">Loading profile data...</p>
+          <p className="mt-4 text-slate-800 font-medium">
+            Loading profile data...
+          </p>
         </div>
       </div>
     );
@@ -193,160 +195,188 @@ export default function ProfilSiswaPage() {
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="text-center bg-white p-8 rounded-xl shadow-lg">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-slate-800 font-medium">Loading profile data...</p>
+          <p className="mt-4 text-slate-800 font-medium">
+            Loading profile data...
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <DashboardLayout userRole="siswa">
-      {/* Header */}
-      <div className="mb-6">
-        <div className="flex items-center">
-          <Button
-            onClick={() => router.push("/siswa/dashboard")}
-            variant="secondary"
-            size="sm"
-            className="mr-4"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Kembali
-          </Button>
-          <div>
-            <h1 className="text-2xl font-bold text-slate-900">Profil Siswa</h1>
-            <p className="text-slate-700 font-medium">Informasi data diri dan akademik</p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      <DashboardLayout userRole="siswa">
+        {/* Hero Header Section */}
+        <div className="mb-8 bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-600 rounded-3xl shadow-2xl text-white overflow-hidden relative">
+          <div className="absolute inset-0 bg-black/10"></div>
+          <div className="relative px-6 py-8 sm:px-8">
+            <div className="flex items-center">
+              <button
+                onClick={() => router.push("/siswa/dashboard")}
+                className="mr-4 p-2 bg-white/20 hover:bg-white/30 rounded-xl transition-all duration-200 backdrop-blur-sm border border-white/30"
+              >
+                <ArrowLeft className="h-5 w-5 text-white" />
+              </button>
+              <div>
+                <h1 className="text-3xl lg:text-4xl font-bold mb-2">
+                  Profil Siswa 👤
+                </h1>
+                <p className="text-blue-100 text-lg">
+                  Informasi data diri dan akademik
+                </p>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Profile Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Personal Information */}
-        <Card className="border-blue-100 bg-gradient-to-br from-white to-blue-50 hover:shadow-xl transition-all duration-300">
-          <CardHeader>
-            <CardTitle className="flex items-center text-slate-800">
-              <User className="h-5 w-5 mr-2 text-blue-600" />
-              Informasi Pribadi
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
+        {/* Profile Cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Personal Information */}
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-300">
+            <div className="px-6 py-4 border-b border-white/30">
+              <h3 className="text-xl font-bold text-gray-900 flex items-center">
+                <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-2 rounded-xl mr-3">
+                  <User className="h-5 w-5 text-white" />
+                </div>
+                Informasi Pribadi
+              </h3>
+            </div>
+            <div className="p-6">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-1">
+                    Nama Lengkap
+                  </label>
+                  <p className="text-gray-900 font-bold text-base">
+                    {siswaData.nama_siswa}
+                  </p>
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-1">
+                    NISN
+                  </label>
+                  <p className="text-gray-900 font-semibold text-base">
+                    {siswaData.nisn}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Academic Information */}
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-300">
+            <div className="px-6 py-4 border-b border-white/30">
+              <h3 className="text-xl font-bold text-gray-900 flex items-center">
+                <div className="bg-gradient-to-br from-green-500 to-emerald-600 p-2 rounded-xl mr-3">
+                  <GraduationCap className="h-5 w-5 text-white" />
+                </div>
+                Informasi Akademik
+              </h3>
+            </div>
+            <div className="p-6">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-1">
+                    Kelas
+                  </label>
+                  <p className="text-gray-900 font-bold text-base">
+                    {siswaData.kelas}
+                  </p>
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-1">
+                    <Calendar className="h-4 w-4 inline mr-1" />
+                    Tahun Pelajaran
+                  </label>
+                  <p className="text-gray-900 font-semibold text-base">
+                    {siswaData.tahun_pelajaran}
+                  </p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-800 mb-1">
+                    Semester
+                  </label>
+                  <p className="text-slate-900 font-medium text-base">
+                    {siswaData.semester}
+                  </p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-800 mb-1">
+                    <Building className="h-4 w-4 inline mr-1" />
+                    DUDI (Dunia Usaha/Dunia Industri)
+                  </label>
+                  <p className="text-gray-900 font-semibold text-base">
+                    {siswaData.nama_dudi}
+                  </p>
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-1">
+                    <User className="h-4 w-4 inline mr-1" />
+                    Guru Pembimbing
+                  </label>
+                  <p className="text-gray-900 font-semibold text-base">
+                    {siswaData.nama_guru}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Account Information */}
+        <div className="mt-8 bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-300">
+          <div className="px-6 py-4 border-b border-white/30">
+            <h3 className="text-xl font-bold text-gray-900 flex items-center">
+              <div className="bg-gradient-to-br from-purple-500 to-pink-600 p-2 rounded-xl mr-3">
+                <User className="h-5 w-5 text-white" />
+              </div>
+              Informasi Akun
+            </h3>
+          </div>
+          <div className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-800 mb-1">
-                  Nama Lengkap
+                <label className="block text-sm font-bold text-gray-700 mb-1">
+                  Username
                 </label>
-                <p className="text-slate-900 font-semibold text-base">
-                  {siswaData.nama_siswa}
+                <p className="text-gray-900 font-semibold text-base">
+                  {user.username}
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-800 mb-1">
-                  NISN
+                <label className="block text-sm font-bold text-gray-700 mb-1">
+                  Role
                 </label>
-                <p className="text-slate-900 font-medium text-base">{siswaData.nisn}</p>
+                <span className="inline-flex items-center px-4 py-2 rounded-xl text-sm font-bold bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg">
+                  {user.role}
+                </span>
               </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Academic Information */}
-        <Card className="border-green-100 bg-gradient-to-br from-white to-green-50 hover:shadow-xl transition-all duration-300">
-          <CardHeader>
-            <CardTitle className="flex items-center text-slate-800">
-              <GraduationCap className="h-5 w-5 mr-2 text-green-600" />
-              Informasi Akademik
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-800 mb-1">
-                  Kelas
-                </label>
-                <p className="text-slate-900 font-semibold text-base">{siswaData.kelas}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-800 mb-1">
-                  <Calendar className="h-4 w-4 inline mr-1" />
-                  Tahun Pelajaran
-                </label>
-                <p className="text-slate-900 font-medium text-base">{siswaData.tahun_pelajaran}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-800 mb-1">
-                  Semester
-                </label>
-                <p className="text-slate-900 font-medium text-base">{siswaData.semester}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-800 mb-1">
-                  <Building className="h-4 w-4 inline mr-1" />
-                  DUDI (Dunia Usaha/Dunia Industri)
-                </label>
-                <p className="text-slate-900 font-medium text-base">{siswaData.nama_dudi}</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-800 mb-1">
-                  <User className="h-4 w-4 inline mr-1" />
-                  Guru Pembimbing
-                </label>
-                <p className="text-slate-900 font-medium text-base">{siswaData.nama_guru}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Account Information */}
-      <Card className="mt-6 border-purple-100 bg-gradient-to-br from-white to-purple-50 hover:shadow-xl transition-all duration-300">
-        <CardHeader>
-          <CardTitle className="flex items-center text-slate-800">
-            <User className="h-5 w-5 mr-2 text-purple-600" />
-            Informasi Akun
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-800 mb-1">
-                Username
-              </label>
-              <p className="text-slate-900 font-medium text-base">{user.username}</p>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-800 mb-1">
-                Role
-              </label>
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                {user.role}
-              </span>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
 
-      {/* Action Buttons */}
-      <div className="mt-6 flex flex-col sm:flex-row gap-4">
-        <Button 
-          variant="primary" 
-          size="sm" 
-          href="/siswa/profil/edit"
-          className="flex-1 sm:flex-none"
-        >
-          <Edit className="h-4 w-4 mr-2" />
-          Ubah Password
-        </Button>
-        <Button 
-          variant="outline" 
-          size="sm" 
-          onClick={handleLogout}
-          className="flex-1 sm:flex-none text-red-600 border-red-300 hover:bg-red-50 hover:border-red-400"
-        >
-          <LogOut className="h-4 w-4 mr-2" />
-          Logout
-        </Button>
-      </div>
-    </DashboardLayout>
+        {/* Action Buttons */}
+        <div className="mt-8 flex flex-col sm:flex-row gap-4">
+          <Button
+            variant="primary"
+            size="sm"
+            href="/siswa/profil/edit"
+            className="flex-1 sm:flex-none bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+          >
+            <Edit className="h-4 w-4 mr-2" />
+            Ubah Password
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleLogout}
+            className="flex-1 sm:flex-none bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white font-bold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+          >
+            <LogOut className="h-4 w-4 mr-2" />
+            Logout
+          </Button>
+        </div>
+      </DashboardLayout>
+    </div>
   );
 }

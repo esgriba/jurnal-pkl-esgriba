@@ -26,7 +26,6 @@ import {
   RefreshCw,
 } from "lucide-react";
 import DashboardLayout from "@/components/ui/DashboardLayout";
-import PushNotificationManager from "@/components/ui/PushNotificationManager";
 import {
   Card,
   CardHeader,
@@ -302,17 +301,18 @@ export default function SiswaDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <DashboardLayout userRole="siswa">
-        {/* Simple Welcome Header */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-6">
-          <div className="px-6 py-8">
+        {/* Hero Header Section */}
+        <div className="mb-8 bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-600 rounded-3xl shadow-2xl text-white overflow-hidden relative">
+          <div className="absolute inset-0 bg-black/10"></div>
+          <div className="relative px-6 py-8 sm:px-8">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-semibold text-gray-900 mb-1">
+                <h1 className="text-3xl lg:text-4xl font-bold mb-2">
                   Halo, {siswaData.nama_siswa}! 👋
                 </h1>
-                <p className="text-gray-600">
+                <p className="text-blue-100 text-lg">
                   {new Date().toLocaleDateString("id-ID", {
                     weekday: "long",
                     day: "numeric",
@@ -321,31 +321,21 @@ export default function SiswaDashboard() {
                   })}
                 </p>
               </div>
-              <div className="text-right">
-                <div className="text-sm text-gray-500">Waktu Jakarta (WIB)</div>
-                <div className="text-lg font-medium text-gray-900">
-                  {serverTimeString || "Loading..."}
-                </div>
-                {process.env.NODE_ENV === "development" && (
-                  <div className="text-xs text-blue-600 mt-1">
-                    Local: {Intl.DateTimeFormat().resolvedOptions().timeZone}
-                  </div>
-                )}
-              </div>
+              <div className="text-right"></div>
             </div>
           </div>
         </div>
 
         {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {/* Jurnal Count */}
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-300">
             <div className="flex items-center">
-              <div className="bg-blue-100 p-3 rounded-lg mr-4">
-                <BookOpen className="h-6 w-6 text-blue-600" />
+              <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-3 rounded-xl mr-4 shadow-lg">
+                <BookOpen className="h-6 w-6 text-white" />
               </div>
               <div>
-                <p className="text-2xl font-semibold text-gray-900">
+                <p className="text-2xl font-bold text-gray-900">
                   {jurnalCount}
                 </p>
                 <p className="text-sm text-gray-600">Total Jurnal</p>
@@ -354,29 +344,29 @@ export default function SiswaDashboard() {
           </div>
 
           {/* Today's Attendance */}
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-300">
             <div className="flex items-center">
               <div
-                className={`p-3 rounded-lg mr-4 ${
+                className={`p-3 rounded-xl mr-4 shadow-lg ${
                   todayAttendance
                     ? todayAttendance.status === "Hadir"
-                      ? "bg-green-100"
-                      : "bg-red-100"
-                    : "bg-gray-100"
+                      ? "bg-gradient-to-br from-green-500 to-emerald-600"
+                      : "bg-gradient-to-br from-red-500 to-rose-600"
+                    : "bg-gradient-to-br from-gray-400 to-gray-500"
                 }`}
               >
                 {todayAttendance ? (
                   todayAttendance.status === "Hadir" ? (
-                    <CheckCircle className="h-6 w-6 text-green-600" />
+                    <CheckCircle className="h-6 w-6 text-white" />
                   ) : (
-                    <XCircle className="h-6 w-6 text-red-600" />
+                    <XCircle className="h-6 w-6 text-white" />
                   )
                 ) : (
-                  <Clock className="h-6 w-6 text-gray-600" />
+                  <Clock className="h-6 w-6 text-white" />
                 )}
               </div>
               <div>
-                <p className="text-lg font-medium text-gray-900">
+                <p className="text-lg font-bold text-gray-900">
                   {todayAttendance ? todayAttendance.status : "Belum Absen"}
                 </p>
                 <p className="text-sm text-gray-600">Status Hari Ini</p>
@@ -385,21 +375,23 @@ export default function SiswaDashboard() {
           </div>
 
           {/* Attendance Status */}
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-300">
             <div className="flex items-center">
               <div
-                className={`p-3 rounded-lg mr-4 ${
-                  isAfter3PM ? "bg-red-100" : "bg-green-100"
+                className={`p-3 rounded-xl mr-4 shadow-lg ${
+                  isAfter3PM
+                    ? "bg-gradient-to-br from-red-500 to-rose-600"
+                    : "bg-gradient-to-br from-green-500 to-emerald-600"
                 }`}
               >
                 {isAfter3PM ? (
-                  <XCircle className="h-6 w-6 text-red-600" />
+                  <XCircle className="h-6 w-6 text-white" />
                 ) : (
-                  <CheckCircle className="h-6 w-6 text-green-600" />
+                  <CheckCircle className="h-6 w-6 text-white" />
                 )}
               </div>
               <div>
-                <p className="text-lg font-medium text-gray-900">
+                <p className="text-lg font-bold text-gray-900">
                   {isAfter3PM ? "Tutup" : "Buka"}
                 </p>
                 <p className="text-sm text-gray-600">Absensi</p>
@@ -409,25 +401,23 @@ export default function SiswaDashboard() {
         </div>
 
         {/* Main Actions */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-6">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-medium text-gray-900">Aksi Utama</h2>
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 mb-8">
+          <div className="px-6 py-4 border-b border-white/30">
+            <h2 className="text-xl font-bold text-gray-900">Aksi Utama</h2>
           </div>
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Create Journal */}
               <Link
                 href="/siswa/jurnal/create"
-                className="flex items-center p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors duration-200 group"
+                className="flex items-center p-6 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl text-white group"
               >
-                <div className="bg-blue-100 p-3 rounded-lg mr-4 group-hover:bg-blue-200">
-                  <Plus className="h-6 w-6 text-blue-600" />
+                <div className="bg-white/20 p-3 rounded-xl mr-4 group-hover:bg-white/30">
+                  <Plus className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-medium text-gray-900 mb-1">
-                    Buat Jurnal
-                  </h3>
-                  <p className="text-sm text-gray-600">
+                  <h3 className="font-bold text-white mb-1">Buat Jurnal</h3>
+                  <p className="text-sm text-blue-100">
                     Catat kegiatan PKL hari ini
                   </p>
                 </div>
@@ -436,30 +426,38 @@ export default function SiswaDashboard() {
               {/* Attendance */}
               <Link
                 href="/siswa/absensi"
-                className={`flex items-center p-4 border border-gray-200 rounded-lg transition-colors duration-200 group ${
+                className={`flex items-center p-6 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl group ${
                   todayAttendance
-                    ? "opacity-50 cursor-not-allowed"
-                    : "hover:border-green-300 hover:bg-green-50"
+                    ? "bg-gray-300 opacity-50 cursor-not-allowed"
+                    : "bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white"
                 }`}
               >
                 <div
-                  className={`p-3 rounded-lg mr-4 ${
+                  className={`p-3 rounded-xl mr-4 ${
                     todayAttendance
-                      ? "bg-gray-100"
-                      : "bg-green-100 group-hover:bg-green-200"
+                      ? "bg-gray-300"
+                      : "bg-white/20 group-hover:bg-white/30"
                   }`}
                 >
                   <CheckCircle
                     className={`h-6 w-6 ${
-                      todayAttendance ? "text-gray-400" : "text-green-600"
+                      todayAttendance ? "text-gray-600" : "text-white"
                     }`}
                   />
                 </div>
                 <div>
-                  <h3 className="font-medium text-gray-900 mb-1">
+                  <h3
+                    className={`font-bold mb-1 ${
+                      todayAttendance ? "text-gray-600" : "text-white"
+                    }`}
+                  >
                     {todayAttendance ? "Sudah Absen" : "Absensi"}
                   </h3>
-                  <p className="text-sm text-gray-600">
+                  <p
+                    className={`text-sm ${
+                      todayAttendance ? "text-gray-500" : "text-green-100"
+                    }`}
+                  >
                     {todayAttendance
                       ? `Status: ${todayAttendance.status}`
                       : "Absen kehadiran hari ini"}
@@ -470,16 +468,14 @@ export default function SiswaDashboard() {
               {/* View Journals */}
               <Link
                 href="/siswa/jurnal"
-                className="flex items-center p-4 border border-gray-200 rounded-lg hover:border-purple-300 hover:bg-purple-50 transition-colors duration-200 group"
+                className="flex items-center p-6 bg-gradient-to-r from-purple-500 to-pink-600 rounded-2xl hover:from-purple-600 hover:to-pink-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl text-white group"
               >
-                <div className="bg-purple-100 p-3 rounded-lg mr-4 group-hover:bg-purple-200">
-                  <Eye className="h-6 w-6 text-purple-600" />
+                <div className="bg-white/20 p-3 rounded-xl mr-4 group-hover:bg-white/30">
+                  <Eye className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-medium text-gray-900 mb-1">
-                    Lihat Jurnal
-                  </h3>
-                  <p className="text-sm text-gray-600">
+                  <h3 className="font-bold text-white mb-1">Lihat Jurnal</h3>
+                  <p className="text-sm text-purple-100">
                     Daftar semua jurnal yang dibuat
                   </p>
                 </div>
@@ -488,14 +484,14 @@ export default function SiswaDashboard() {
               {/* Profile */}
               <Link
                 href="/siswa/profil"
-                className="flex items-center p-4 border border-gray-200 rounded-lg hover:border-orange-300 hover:bg-orange-50 transition-colors duration-200 group"
+                className="flex items-center p-6 bg-gradient-to-r from-orange-500 to-red-600 rounded-2xl hover:from-orange-600 hover:to-red-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl text-white group"
               >
-                <div className="bg-orange-100 p-3 rounded-lg mr-4 group-hover:bg-orange-200">
-                  <User className="h-6 w-6 text-orange-600" />
+                <div className="bg-white/20 p-3 rounded-xl mr-4 group-hover:bg-white/30">
+                  <User className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-medium text-gray-900 mb-1">Profil</h3>
-                  <p className="text-sm text-gray-600">
+                  <h3 className="font-bold text-white mb-1">Profil</h3>
+                  <p className="text-sm text-orange-100">
                     Kelola akun dan password
                   </p>
                 </div>
@@ -505,9 +501,9 @@ export default function SiswaDashboard() {
         </div>
 
         {/* Student Info */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-8">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-medium text-gray-900">Informasi PKL</h2>
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 mb-8">
+          <div className="px-6 py-4 border-b border-white/30">
+            <h2 className="text-xl font-bold text-gray-900">Informasi PKL</h2>
           </div>
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -580,21 +576,18 @@ export default function SiswaDashboard() {
           </div>
         </div>
 
-        {/* Push Notification Manager */}
-        <PushNotificationManager userRole="siswa" />
-
         {/* Footer */}
-        <footer className="mt-12 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl shadow-sm border border-blue-200 p-6">
+        <footer className="mt-12 bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-600 rounded-2xl shadow-2xl text-white p-8">
           <div className="text-center">
             <div className="flex items-center justify-center mb-6">
-              <div className="bg-blue-600 p-2 rounded-lg mr-3">
-                <GraduationCap className="h-6 w-6 text-white" />
+              <div className="bg-white/20 p-3 rounded-xl mr-4">
+                <GraduationCap className="h-8 w-8 text-white" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-gray-900">
+                <h3 className="text-2xl font-bold text-white">
                   SMK PGRI Banyuputih
                 </h3>
-                <p className="text-sm text-blue-600 font-medium">
+                <p className="text-sm text-blue-100 font-medium">
                   Sistem Jurnal PKL Digital
                 </p>
               </div>
@@ -602,7 +595,7 @@ export default function SiswaDashboard() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
               {/* Contact Info */}
-              <div className="bg-white p-4 rounded-lg shadow-sm">
+              <div className="bg-white/20 backdrop-blur-sm p-6 rounded-xl border border-white/30">
                 <h4 className="font-semibold text-gray-900 mb-3 flex items-center justify-center">
                   <Building className="h-4 w-4 mr-2 text-blue-600" />
                   Kontak Sekolah
@@ -612,58 +605,34 @@ export default function SiswaDashboard() {
                     <MapPin className="h-3 w-3 mr-2 text-gray-500" />
                     Jl. Pandean - Wonorejoooo
                   </p>
-                  <p className="flex items-center justify-center">
+                  <p className="flex items-center justify-center text-white">
                     📞 08563682390
                   </p>
-                  <p className="flex items-center justify-center">
+                  <p className="flex items-center justify-center text-white">
                     ✉️ esgriba20522645@gmail.com
                   </p>
                 </div>
               </div>
 
               {/* System Info */}
-              <div className="bg-white p-4 rounded-lg shadow-sm">
-                <h4 className="font-semibold text-gray-900 mb-3 flex items-center justify-center">
-                  <Activity className="h-4 w-4 mr-2 text-purple-600" />
-                  Status Sistem
-                </h4>
-                <div className="space-y-2 text-sm text-gray-600">
-                  <p className="flex items-center justify-center">
-                    🚀 PKL System v2.0
-                  </p>
-                  <p className="flex items-center justify-center">
-                    <Clock className="h-3 w-3 mr-2 text-gray-500" />
-                    Waktu Jakarta (WIB)
-                  </p>
-                  <p className="flex items-center justify-center">
-                    📱 Mobile & Desktop Ready
-                  </p>
-                  <div className="flex items-center justify-center">
-                    <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
-                      <span className="w-2 h-2 bg-green-500 rounded-full mr-1 animate-pulse"></span>
-                      Online
-                    </span>
-                  </div>
-                </div>
-              </div>
             </div>
 
             {/* Bottom Bar */}
-            <div className="border-t border-blue-200 pt-4">
+            <div className="border-t border-white/30 pt-6">
               <div className="flex flex-col md:flex-row justify-between items-center space-y-3 md:space-y-0">
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-blue-100">
                   © 2025 SMK PGRI Banyuputih. Dikembangkan dengan{" "}
-                  <span className="text-red-500">❤️</span> untuk masa depan yang
-                  lebih baik.
+                  <span className="text-pink-300">❤️</span> untuk masa depan
+                  yang lebih baik.
                 </p>
                 <div className="flex items-center space-x-3">
                   <div className="flex items-center space-x-2">
-                    <User className="h-3 w-3 text-gray-500" />
-                    <span className="text-xs text-gray-600">
+                    <User className="h-3 w-3 text-blue-200" />
+                    <span className="text-xs text-blue-100">
                       {user?.nama || "Siswa PKL"}
                     </span>
                   </div>
-                  <span className="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full">
+                  <span className="text-xs px-3 py-1 bg-white/20 text-white rounded-full border border-white/30">
                     {siswaData?.kelas || "Kelas"}
                   </span>
                 </div>
