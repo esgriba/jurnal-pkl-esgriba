@@ -185,33 +185,13 @@ export default function AdminDashboardPage() {
   }
 
   const statCards = [
-    {
-      title: "Total Users",
-      value: stats?.totalUsers || 0,
-      icon: <Users className="h-6 w-6" />,
-      color: "blue" as const,
-      link: "/admin/users",
-    },
+    
     {
       title: "Total Siswa",
       value: stats?.totalSiswa || 0,
       icon: <GraduationCap className="h-6 w-6" />,
       color: "green" as const,
       link: "/admin/siswa",
-    },
-    {
-      title: "Total Guru",
-      value: stats?.totalGuru || 0,
-      icon: <UserCheck className="h-6 w-6" />,
-      color: "purple" as const,
-      link: "/admin/guru",
-    },
-    {
-      title: "Total DUDI",
-      value: stats?.totalDudi || 0,
-      icon: <Building2 className="h-6 w-6" />,
-      color: "yellow" as const,
-      link: "/admin/dudi",
     },
     {
       title: "Total Jurnal",
@@ -289,54 +269,7 @@ export default function AdminDashboardPage() {
           </CardContent>
         </Card>
 
-        {/* Quick Actions */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Aksi Cepat</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              <div className="grid grid-cols-1 gap-3">
-                <Button
-                  href="/admin/users/create"
-                  variant="primary"
-                  size="sm"
-                  className="justify-start"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Tambah User Baru
-                </Button>
-                <Button
-                  href="/admin/siswa/create"
-                  variant="success"
-                  size="sm"
-                  className="justify-start"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Tambah Siswa Baru
-                </Button>
-                <Button
-                  href="/admin/guru/create"
-                  variant="secondary"
-                  size="sm"
-                  className="justify-start"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Tambah Guru Baru
-                </Button>
-                <Button
-                  href="/admin/dudi/create"
-                  variant="warning"
-                  size="sm"
-                  className="justify-start"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Tambah DUDI Baru
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        
       </div>
     </DashboardLayout>
   );

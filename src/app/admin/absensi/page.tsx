@@ -347,7 +347,6 @@ export default function AdminAbsensiPage() {
               </div>
               <div className="ml-auto flex items-center space-x-4">
                 <div className="text-sm text-gray-500">
-                  <span className="font-medium">Waktu WIB:</span>{" "}
                   {currentWIBTime.toLocaleString("id-ID", {
                     timeZone: "Asia/Jakarta",
                     year: "numeric",
@@ -358,16 +357,7 @@ export default function AdminAbsensiPage() {
                     second: "2-digit",
                   })}
                 </div>
-                <div
-                  className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    currentWIBTime.getHours() >= 15
-                      ? "bg-green-100 text-green-800"
-                      : "bg-yellow-100 text-yellow-800"
-                  }`}
-                >
-                  Auto Alpha{" "}
-                  {currentWIBTime.getHours() >= 15 ? "Aktif" : "Nonaktif"}
-                </div>
+          
               </div>
             </div>
           </div>
