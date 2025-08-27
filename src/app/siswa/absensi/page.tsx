@@ -127,8 +127,7 @@ export default function AbsensiPage() {
     return "";
   });
   const [serverTime, setServerTime] = useState<Date | null>(null);
-  const [isLate, setIsLate] = useState(false);
-  const [isAfter3PM, setIsAfter3PM] = useState(false);
+  const [isOutsideAbsensiHours, setIsOutsideAbsensiHours] = useState(false);
   const [isServerTimeAvailable, setIsServerTimeAvailable] = useState(false);
   const [locationAddress, setLocationAddress] = useState<string>("");
   const [isLoadingAddress, setIsLoadingAddress] = useState(false);
@@ -136,7 +135,7 @@ export default function AbsensiPage() {
   const router = useRouter();
   const supabase = createClient();
 
-  // Calculate disable conditions - disable if not mounted, submitting, already attended, no valid location, OR after 3 PM
+  // Calculate disable conditions - disable if not mounted, submitting, already attended, no valid location, OR outside absensi hours
   const isLocationValid =
     coordinates !== null &&
     !location.includes("ditolak") &&
@@ -150,7 +149,7 @@ export default function AbsensiPage() {
     isSubmitting ||
     todayAbsensi !== null ||
     !isLocationValid ||
-    isAfter3PM;
+    isOutsideAbsensiHours;
 
   // Function to get server time from world clock API
   const getServerTime = async (): Promise<Date> => {
@@ -284,21 +283,18 @@ export default function AbsensiPage() {
 
       // Get WIB hour for business logic
       const hour = nowWIB.getHours(); // Get proper local hour in WIB
-      const isLateValue = hour >= 8;
-      const isAfter3PMValue = hour >= 15;
+      const isOutsideAbsensiHoursValue = hour < 7 || hour >= 12; // Absensi hanya jam 7:00-11:59
 
       console.log("Time check (WIB):", {
         utc: now.toISOString(),
         wib: nowWIB.toISOString(),
         displayTime: jakartaTime,
         hour,
-        isLateValue,
-        isAfter3PMValue,
+        isOutsideAbsensiHoursValue,
         currentTime: jakartaTime,
       });
 
-      setIsLate(isLateValue);
-      setIsAfter3PM(isAfter3PMValue);
+      setIsOutsideAbsensiHours(isOutsideAbsensiHoursValue);
     } catch (error) {
       console.error("Error updating current time:", error);
 
@@ -316,8 +312,7 @@ export default function AbsensiPage() {
       console.log("Using fallback time:", fallbackTime);
 
       const hour = fallbackWIB.getUTCHours();
-      setIsLate(hour >= 8);
-      setIsAfter3PM(hour >= 15);
+      setIsOutsideAbsensiHours(hour < 7 || hour >= 12);
     }
   };
 
@@ -665,12 +660,22 @@ export default function AbsensiPage() {
       return;
     }
 
-    // Block attendance completely after 3 PM (15:00)
-    if (isAfter3PM) {
-      showError(
-        "Waktu Absensi Telah Berakhir",
-        "Absensi tidak dapat dilakukan setelah jam 15:00 WIB.\n\nJika ada keperluan khusus, silakan hubungi guru pembimbing Anda."
-      );
+    // Check if outside absensi hours (7:00-12:00)
+    if (isOutsideAbsensiHours) {
+      const now = new Date();
+      const currentHour = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Jakarta" })).getHours();
+      
+      if (currentHour < 7) {
+        showError(
+          "Belum Waktunya Absensi",
+          "Absensi hanya dapat dilakukan mulai pukul 07:00 WIB.\n\nWaktu absensi: 07:00 - 12:00 WIB"
+        );
+      } else if (currentHour >= 12) {
+        showError(
+          "Waktu Absensi Telah Berakhir",
+          "Absensi hanya dapat dilakukan sampai pukul 12:00 WIB.\n\nWaktu absensi: 07:00 - 12:00 WIB\n\nJika ada keperluan khusus, silakan hubungi guru pembimbing Anda."
+        );
+      }
       return;
     }
 
@@ -686,12 +691,22 @@ export default function AbsensiPage() {
   const submitAbsensi = async (status: "Hadir" | "Sakit" | "Izin") => {
     if (!siswaData || !user) return;
 
-    // Double-check: Block attendance after 3 PM
-    if (isAfter3PM) {
-      showError(
-        "Waktu Absensi Telah Berakhir",
-        "Absensi tidak dapat dilakukan setelah jam 15:00 WIB."
-      );
+    // Double-check: Block attendance outside absensi hours (7:00-12:00)
+    if (isOutsideAbsensiHours) {
+      const now = new Date();
+      const currentHour = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Jakarta" })).getHours();
+      
+      if (currentHour < 7) {
+        showError(
+          "Belum Waktunya Absensi",
+          "Absensi hanya dapat dilakukan mulai pukul 07:00 WIB."
+        );
+      } else if (currentHour >= 12) {
+        showError(
+          "Waktu Absensi Telah Berakhir",
+          "Absensi hanya dapat dilakukan sampai pukul 12:00 WIB."
+        );
+      }
       return;
     }
 
@@ -742,7 +757,7 @@ export default function AbsensiPage() {
         nama_dudi: siswaData.nama_dudi?.substring(0, 200) || "",
         tanggal: jakartaDate,
         status: status,
-        keterangan: isLate && status === "Hadir" ? "Terlambat" : null,
+        keterangan: null,
         id_guru: siswaData.id_guru?.substring(0, 100) || "",
         nama_guru: siswaData.nama_guru?.substring(0, 100) || "",
         jam_absensi: jakartaTimeForDB, // Use Jakarta time format
@@ -848,9 +863,15 @@ export default function AbsensiPage() {
                 <div className="inline-flex items-center px-4 py-2 rounded-xl bg-black/30 backdrop-blur-sm border border-white/30">
                   <Clock className="h-5 w-5 mr-2 text-white" />
                   <span className="font-semibold text-white drop-shadow-lg">
-                    {isAfter3PM
-                      ? "Waktu absensi telah berakhir"
-                      : "Waktu absensi tersedia hingga 15:00 WIB"}
+                    {isOutsideAbsensiHours
+                      ? (() => {
+                          const now = new Date();
+                          const currentHour = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Jakarta" })).getHours();
+                          return currentHour < 7 
+                            ? "Absensi belum dimulai (mulai jam 07:00)" 
+                            : "Waktu absensi telah berakhir (sampai jam 12:00)";
+                        })()
+                      : "Waktu absensi: 07:00 - 12:00 WIB"}
                   </span>
                 </div>
               </div>
@@ -880,21 +901,6 @@ export default function AbsensiPage() {
             </div>
           </div>
         </div>
-
-        {/* Late Warning */}
-        {isLate && !todayAbsensi && (
-          <div className="mb-6 bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-2xl p-6 shadow-lg">
-            <div className="flex items-center">
-              <AlertCircle className="h-6 w-6 mr-3" />
-              <div>
-                <div className="font-semibold">Perhatian!</div>
-                <div className="text-yellow-100">
-                  Sudah melewati jam 8 pagi. Absensi akan dianggap terlambat.
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Location Section */}
         <div className="mb-6 bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
@@ -1052,18 +1058,6 @@ export default function AbsensiPage() {
                     </span>
                   </div>
                 </div>
-                {todayAbsensi.keterangan && (
-                  <div className="bg-gradient-to-r from-yellow-50 to-orange-50 p-4 rounded-xl">
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-700 font-medium">
-                        Keterangan:
-                      </span>
-                      <span className="font-semibold text-yellow-800">
-                        {todayAbsensi.keterangan}
-                      </span>
-                    </div>
-                  </div>
-                )}
                 <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl">
                   <div className="flex items-center justify-between">
                     <span className="text-gray-700 font-medium">Lokasi:</span>
@@ -1081,15 +1075,20 @@ export default function AbsensiPage() {
               <h3 className="text-lg font-semibold text-white">
                 Pilih Status Kehadiran
               </h3>
-              {isAfter3PM && (
+              {isOutsideAbsensiHours && (
                 <div className="mt-2 bg-red-500/20 border border-red-300 rounded-lg p-3">
                   <p className="text-red-100 text-sm">
-                    ⏰ Waktu absensi telah berakhir (setelah jam 15:00 WIB).
-                    Silakan hubungi guru pembimbing jika ada keperluan khusus.
+                    ⏰ {(() => {
+                      const now = new Date();
+                      const currentHour = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Jakarta" })).getHours();
+                      return currentHour < 7 
+                        ? "Waktu absensi belum dimulai. Absensi dapat dilakukan mulai pukul 07:00 WIB." 
+                        : "Waktu absensi telah berakhir (pukul 12:00 WIB). Silakan hubungi guru pembimbing jika ada keperluan khusus.";
+                    })()}
                   </p>
                 </div>
               )}
-              {!isLocationValid && (
+              {!isLocationValid && !isOutsideAbsensiHours && (
                 <div className="mt-2 bg-orange-500/20 border border-orange-300 rounded-lg p-3">
                   <p className="text-orange-100 text-sm">
                     📍 Lokasi belum aktif. Silakan izinkan akses lokasi terlebih
@@ -1124,8 +1123,8 @@ export default function AbsensiPage() {
                         ? "Anda sudah melakukan absensi hari ini"
                         : !isLocationValid
                         ? "Lokasi diperlukan untuk absensi"
-                        : isAfter3PM
-                        ? "Waktu absensi telah berakhir"
+                        : isOutsideAbsensiHours
+                        ? "Waktu absensi: 07:00 - 12:00 WIB"
                         : "Saya hadir hari ini"}
                     </p>
                     <Button
@@ -1164,8 +1163,8 @@ export default function AbsensiPage() {
                         ? "Anda sudah melakukan absensi hari ini"
                         : !isLocationValid
                         ? "Lokasi diperlukan untuk absensi"
-                        : isAfter3PM
-                        ? "Waktu absensi telah berakhir"
+                        : isOutsideAbsensiHours
+                        ? "Waktu absensi: 07:00 - 12:00 WIB"
                         : "Saya sedang sakit"}
                     </p>
                     <Button
@@ -1204,8 +1203,8 @@ export default function AbsensiPage() {
                         ? "Anda sudah melakukan absensi hari ini"
                         : !isLocationValid
                         ? "Lokasi diperlukan untuk absensi"
-                        : isAfter3PM
-                        ? "Waktu absensi telah berakhir"
+                        : isOutsideAbsensiHours
+                        ? "Waktu absensi: 07:00 - 12:00 WIB"
                         : "Saya ada keperluan"}
                     </p>
                     <Button
@@ -1276,12 +1275,10 @@ export default function AbsensiPage() {
                   </div>
                   <div>
                     <div className="font-semibold text-blue-900 mb-1">
-                      Catatan Penting:
+                      Jadwal Absensi:
                     </div>
                     <div className="text-blue-800">
-                      Absensi harus dilakukan sebelum jam 8:00 WIB. Jika belum
-                      absen sampai jam 15.00 WIB, status akan otomatis menjadi
-                      Alpha.
+                      Absensi dapat dilakukan setiap hari pada pukul <strong>07:00 - 12:00 WIB</strong>.
                     </div>
                   </div>
                 </div>
