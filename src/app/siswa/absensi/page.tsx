@@ -913,26 +913,30 @@ export default function AbsensiPage() {
           <div className="p-6">
             {coordinates ? (
               <div className="space-y-4">
-                {/* Clickable Coordinates */}
-                <div className="bg-gradient-to-r from-gray-50 to-blue-50 p-4 rounded-xl border-2 border-gray-200 hover:border-blue-300 transition-colors">
-                  <button
-                    onClick={openGoogleMaps}
-                    className="flex items-center gap-3 text-blue-600 hover:text-blue-800 cursor-pointer w-full text-left group"
-                  >
-                    <div className="bg-blue-100 p-2 rounded-lg group-hover:bg-blue-200 transition-colors">
-                      <MapPin className="h-5 w-5 text-blue-600" />
+                {/* Lihat Lokasi Button */}
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-xl border-2 border-blue-200 hover:border-blue-300 transition-colors">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="bg-blue-100 p-2 rounded-lg">
+                        <MapPin className="h-5 w-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-gray-900">
+                          Lokasi Terdeteksi
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          Lokasi Anda berhasil diidentifikasi
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex-1">
-                      <p className="font-semibold text-gray-900">
-                        {coordinates.lat.toFixed(6)},{" "}
-                        {coordinates.lng.toFixed(6)}
-                      </p>
-                      <p className="text-sm text-gray-600 flex items-center gap-1">
-                        Klik untuk buka di Google Maps
-                        <ExternalLink className="h-3 w-3" />
-                      </p>
-                    </div>
-                  </button>
+                    <button
+                      onClick={openGoogleMaps}
+                      className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2"
+                    >
+                      <ExternalLink className="h-4 w-4" />
+                      Lihat Lokasi
+                    </button>
+                  </div>
                 </div>
 
                 {/* Address Information */}
@@ -1061,9 +1065,25 @@ export default function AbsensiPage() {
                 <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl">
                   <div className="flex items-center justify-between">
                     <span className="text-gray-700 font-medium">Lokasi:</span>
-                    <span className="text-sm text-gray-800">
-                      {todayAbsensi.lokasi}
-                    </span>
+                    <button
+                      onClick={() => {
+                        // Extract coordinates from location string if available
+                        const locationText = todayAbsensi.lokasi;
+                        if (locationText && locationText.includes(',') && !locationText.includes(' ')) {
+                          // If it looks like coordinates (contains comma but no spaces)
+                          const url = `https://www.google.com/maps?q=${locationText}`;
+                          window.open(url, "_blank");
+                        } else {
+                          // If it's an address, search for it
+                          const url = `https://www.google.com/maps/search/${encodeURIComponent(locationText)}`;
+                          window.open(url, "_blank");
+                        }
+                      }}
+                      className="bg-green-100 hover:bg-green-200 text-green-800 px-3 py-1 rounded-lg text-sm font-medium transition-colors flex items-center gap-1"
+                    >
+                      <ExternalLink className="h-3 w-3" />
+                      Lihat Lokasi
+                    </button>
                   </div>
                 </div>
               </div>

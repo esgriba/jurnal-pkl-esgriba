@@ -34,62 +34,59 @@ export default function LocationLink({
     );
   }
 
-  // If coordinates are available, show as clickable link
+  // If coordinates are available, show as clickable button
   return (
     <div className={`flex items-center gap-2 ${className}`}>
       {showIcon && <MapPin className="h-4 w-4 text-blue-500" />}
-      <a
-        href={locationData.googleMapsUrl!}
-        target={target}
-        rel="noopener noreferrer"
-        className="flex items-center gap-1 text-blue-600 hover:text-blue-800 hover:underline text-sm transition-colors"
-        title="Buka lokasi di Google Maps"
+      <button
+        onClick={() => {
+          window.open(locationData.googleMapsUrl!, target);
+        }}
+        className="inline-flex items-center gap-1 bg-blue-100 hover:bg-blue-200 text-blue-800 px-3 py-1 rounded-lg text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md"
+        title="Klik untuk buka lokasi di Google Maps"
       >
-        <span>
-          {showFullAddress && locationData.originalText !== locationData.displayText 
-            ? locationData.originalText 
-            : locationData.displayText}
-        </span>
         <ExternalLink className="h-3 w-3" />
-      </a>
+        Lihat Lokasi
+      </button>
     </div>
   );
 }
 
 /**
- * Simplified version that just returns the link without wrapper div
+ * Simplified version that just returns the button without wrapper div
  */
 export function LocationLinkSimple({ 
   locationStr, 
-  className = 'text-blue-600 hover:text-blue-800 hover:underline',
+  className = 'bg-blue-100 hover:bg-blue-200 text-blue-800',
   target = '_blank' 
 }: Pick<LocationLinkProps, 'locationStr' | 'className' | 'target'>) {
   const locationData = getLocationDisplay(locationStr);
   
   if (!locationData.hasCoordinates) {
     return (
-      <span className="text-gray-600 text-sm">
-        {locationData.displayText}
+      <span className="inline-flex items-center px-3 py-1 rounded-lg text-xs bg-gray-100 text-gray-600 font-medium">
+        <MapPin className="h-3 w-3 mr-1" />
+        Lokasi tidak tersedia
       </span>
     );
   }
 
   return (
-    <a
-      href={locationData.googleMapsUrl!}
-      target={target}
-      rel="noopener noreferrer"
-      className={`inline-flex items-center gap-1 ${className} text-sm transition-colors`}
-      title="Buka lokasi di Google Maps"
+    <button
+      onClick={() => {
+        window.open(locationData.googleMapsUrl!, target);
+      }}
+      className={`inline-flex items-center gap-1 px-3 py-1 rounded-lg ${className} text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md`}
+      title="Klik untuk buka lokasi di Google Maps"
     >
-      {locationData.displayText}
       <ExternalLink className="h-3 w-3" />
-    </a>
+      Lihat Lokasi
+    </button>
   );
 }
 
 /**
- * Badge version for status displays
+ * Badge version for status displays - Updated design
  */
 export function LocationBadge({ 
   locationStr, 
@@ -99,7 +96,7 @@ export function LocationBadge({
   
   if (!locationData.hasCoordinates) {
     return (
-      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-600 ${className}`}>
+      <span className={`inline-flex items-center px-3 py-1 rounded-lg text-xs bg-gray-100 text-gray-600 font-medium ${className}`}>
         <MapPin className="h-3 w-3 mr-1" />
         Lokasi tidak tersedia
       </span>
@@ -107,16 +104,15 @@ export function LocationBadge({
   }
 
   return (
-    <a
-      href={locationData.googleMapsUrl!}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800 hover:bg-blue-200 transition-colors ${className}`}
-      title="Buka lokasi di Google Maps"
+    <button
+      onClick={() => {
+        window.open(locationData.googleMapsUrl!, "_blank");
+      }}
+      className={`inline-flex items-center px-3 py-1 rounded-lg text-xs bg-blue-100 text-blue-800 hover:bg-blue-200 transition-all duration-200 font-medium shadow-sm hover:shadow-md ${className}`}
+      title="Klik untuk buka lokasi di Google Maps"
     >
-      <MapPin className="h-3 w-3 mr-1" />
+      <ExternalLink className="h-3 w-3 mr-1" />
       Lihat Lokasi
-      <ExternalLink className="h-3 w-3 ml-1" />
-    </a>
+    </button>
   );
 }
