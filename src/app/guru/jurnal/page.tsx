@@ -326,33 +326,33 @@ export default function GuruJurnalPage() {
                 {filteredJurnal.map((jurnal) => (
                   <div
                     key={jurnal.id_jurnal}
-                    className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                    className="border border-gray-200 rounded-lg p-3 sm:p-4 hover:shadow-md transition-shadow"
                   >
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
+                    <div className="flex justify-between items-start gap-2">
+                      <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-2">
-                          <h3 className="font-semibold text-lg text-gray-900">
+                          <h3 className="font-semibold text-base sm:text-lg text-gray-900 truncate">
                             {jurnal.nama_siswa}
                           </h3>
-                          <span className="text-sm text-gray-500">
+                          <span className="text-sm text-gray-500 whitespace-nowrap">
                             ({jurnal.nisn})
                           </span>
                         </div>
 
                         <div className="space-y-2">
-                          <div className="flex items-center gap-2 text-sm text-gray-600">
-                            <Calendar className="h-4 w-4" />
-                            <span>{formatDate(jurnal.tanggal)}</span>
-                            <Clock className="h-4 w-4 ml-4" />
-                            <span>{formatTime(jurnal.created_at)}</span>
+                          <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600">
+                            <Calendar className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                            <span className="truncate">{formatDate(jurnal.tanggal)}</span>
+                            <Clock className="h-3 w-3 sm:h-4 sm:w-4 ml-2 sm:ml-4 flex-shrink-0" />
+                            <span className="truncate">{formatTime(jurnal.created_at)}</span>
                           </div>
 
-                          <div className="flex items-center gap-2 text-sm text-gray-600">
-                            <MapPin className="h-4 w-4" />
-                            <span>{jurnal.lokasi}</span>
+                          <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600">
+                            <MapPin className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                            <span className="truncate">{jurnal.lokasi}</span>
                           </div>
 
-                          <p className="text-gray-800 mt-2">
+                          <p className="text-gray-800 mt-2 text-sm sm:text-base">
                             {jurnal.deskripsi_kegiatan.length > 150
                               ? `${jurnal.deskripsi_kegiatan.substring(
                                   0,
@@ -361,7 +361,7 @@ export default function GuruJurnalPage() {
                               : jurnal.deskripsi_kegiatan}
                           </p>
 
-                          <div className="flex gap-4 text-sm">
+                          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 text-xs sm:text-sm">
                             <span className="text-blue-600">
                               <strong>Personal:</strong>{" "}
                               {jurnal.evadir_personal}
@@ -373,16 +373,14 @@ export default function GuruJurnalPage() {
                         </div>
                       </div>
 
-                      <div className="flex gap-2 ml-4">
+                      <div className="flex justify-end items-start ml-2 flex-shrink-0">
                         <Link href={`/guru/jurnal/${jurnal.id_jurnal}`}>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="flex items-center gap-1"
+                          <button
+                            className="inline-flex items-center justify-center w-8 h-8 text-indigo-600 hover:text-indigo-900 hover:bg-indigo-50 rounded-full transition-colors duration-200"
+                            title="Lihat Detail"
                           >
                             <Eye className="h-4 w-4" />
-                            Detail
-                          </Button>
+                          </button>
                         </Link>
                       </div>
                     </div>

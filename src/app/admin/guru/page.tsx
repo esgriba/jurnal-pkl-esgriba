@@ -20,7 +20,7 @@ import {
   UserX,
 } from "lucide-react";
 import Link from "next/link";
-import { showConfirmation, showSuccess, showError } from "@/lib/sweetAlert";
+import { showConfirmation, showSuccess, showError } from "@/lib/customAlert";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,

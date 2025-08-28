@@ -14,7 +14,7 @@ import {
 import DashboardLayout from "@/components/ui/DashboardLayout";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
-import { showSuccess, showError, showConfirmation } from "@/lib/sweetAlert";
+import { showSuccess, showError, showConfirmation } from "@/lib/customAlert";
 
 interface UserData {
   id: number;

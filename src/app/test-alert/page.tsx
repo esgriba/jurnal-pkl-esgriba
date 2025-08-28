@@ -1,6 +1,6 @@
 "use client";
 
-import { showSuccess, showError, showWarning, showInfo, showConfirmation, showToast } from "@/lib/sweetAlert";
+import { showSuccess, showError, showWarning, showInfo, showConfirmation, showToast } from "@/lib/customAlert";
 
 export default function TestAlertPage() {
   const handleSuccess = () => {
@@ -38,7 +38,7 @@ export default function TestAlertPage() {
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">
-            Test SweetAlert - Mobile & Dark Mode Fixed
+            Test SweetAlert - Mobile Light Mode Fixed
           </h1>
           
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6">
@@ -46,13 +46,16 @@ export default function TestAlertPage() {
               Perbaikan yang Dilakukan:
             </h2>
             <ul className="list-disc list-inside space-y-2 text-gray-600 dark:text-gray-300">
-              <li>✅ Responsive design untuk mobile (width 90% on mobile)</li>
-              <li>✅ Dark mode support dengan deteksi otomatis</li>
+              <li>✅ Fixed mobile animation out-of-frame issue</li>
+              <li>✅ Perfect centering for popup alerts on mobile</li>
+              <li>✅ Smooth slide animations for toast notifications</li>
+              <li>✅ Constrained width to prevent overflow</li>
+              <li>✅ Fixed mobile light mode display issue</li>
+              <li>✅ Forced light theme for all SweetAlert elements</li>
+              <li>✅ Consistent white background and dark text on mobile</li>
+              <li>✅ Responsive design untuk mobile (width 85% on mobile)</li>
               <li>✅ Toast position yang adaptif (center di mobile, top-end di desktop)</li>
               <li>✅ Font size yang disesuaikan untuk mobile</li>
-              <li>✅ Better contrast untuk teks dan background</li>
-              <li>✅ Enhanced animations dan box shadow</li>
-              <li>✅ Improved button styling dengan hover effects</li>
             </ul>
           </div>
 
@@ -102,13 +105,15 @@ export default function TestAlertPage() {
 
           <div className="mt-8 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
             <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-200 mb-2">
-              📱 Tips untuk Testing:
+              📱 Animation Fixes Applied:
             </h3>
             <ul className="text-blue-700 dark:text-blue-300 text-sm space-y-1">
-              <li>• Coba di mobile device atau resize browser ke ukuran mobile</li>
-              <li>• Toggle dark mode di sistem operasi atau browser</li>
-              <li>• Perhatikan posisi alert berubah dari toast (desktop) ke center (mobile)</li>
-              <li>• Teks harus selalu terbaca dengan kontras yang baik</li>
+              <li>• Alert now animates properly within viewport on mobile</li>
+              <li>• Perfect center positioning prevents out-of-frame issues</li>
+              <li>• Toast notifications slide smoothly from top</li>
+              <li>• Animations respect mobile screen boundaries</li>
+              <li>• Maximum width constraints prevent overflow</li>
+              <li>• Z-index properly configured for layering</li>
             </ul>
           </div>
         </div>

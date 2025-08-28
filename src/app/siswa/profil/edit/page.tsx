@@ -7,7 +7,7 @@ import { Lock, ArrowLeft, AlertCircle, Eye, EyeOff } from "lucide-react";
 import DashboardLayout from "@/components/ui/DashboardLayout";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
-import { showSuccess, showError } from "@/lib/sweetAlert";
+import { showSuccess, showError } from "@/lib/customAlert";
 
 interface UserData {
   id: number;

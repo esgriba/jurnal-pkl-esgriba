@@ -235,14 +235,14 @@ export default function GuruSiswaPage() {
 
   return (
     <DashboardLayout userRole="guru">
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 ">
         {/* Header */}
-        <header className="bg-white shadow">
+        <header className="bg-green-300 shadow rounded-lg">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
               <div className="ml-4">
                 <h1 className="text-xl font-semibold text-gray-900">
-                  Siswa Bimbingan
+                  Data Siswa Bimbingan
                 </h1>
                 <p className="text-sm text-gray-600">Guru: {user?.nama}</p>
               </div>
@@ -356,89 +356,104 @@ export default function GuruSiswaPage() {
             </div>
 
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Siswa
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Tempat PKL
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Jurnal
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Aktivitas
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Aksi
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredSiswa.map((siswa) => {
-                    const stats = jurnalStats[siswa.nisn] || {
-                      totalJurnal: 0,
-                      jurnalBulanIni: 0,
-                      lastEntry: null,
-                    };
-                    const activityStatus = getActivityStatus(stats.lastEntry);
+              <div className="inline-block min-w-full align-middle">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Siswa
+                      </th>
+                      <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">
+                        Tempat PKL
+                      </th>
+                      <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
+                        Jurnal
+                      </th>
+                      <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">
+                        Aktivitas
+                      </th>
+                      <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-20">
+                        Aksi
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {filteredSiswa.map((siswa) => {
+                      const stats = jurnalStats[siswa.nisn] || {
+                        totalJurnal: 0,
+                        jurnalBulanIni: 0,
+                        lastEntry: null,
+                      };
+                      const activityStatus = getActivityStatus(stats.lastEntry);
 
-                    return (
-                      <tr key={siswa.nisn} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div>
-                            <div className="text-sm font-medium text-gray-900">
-                              {siswa.nama_siswa}
-                            </div>
-                            <div className="text-sm text-gray-500">
-                              NISN: {siswa.nisn} • {siswa.kelas}
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
-                            <Building2 className="h-4 w-4 text-gray-400 mr-2" />
-                            <div>
-                              <div className="text-sm text-gray-900">
-                                {siswa.nama_dudi}
+                      return (
+                        <tr key={siswa.nisn} className="hover:bg-gray-50">
+                          <td className="px-3 sm:px-6 py-4">
+                            <div className="space-y-1">
+                              <div className="text-sm font-medium text-gray-900">
+                                {siswa.nama_siswa}
+                              </div>
+                              <div className="text-xs text-gray-500">
+                                NISN: {siswa.nisn} • {siswa.kelas}
+                              </div>
+                              {/* Mobile: Show additional info */}
+                              <div className="md:hidden space-y-1">
+                                <div className="flex items-center text-xs text-gray-600">
+                                  <Building2 className="h-3 w-3 text-gray-400 mr-1" />
+                                  {siswa.nama_dudi}
+                                </div>
+                                <div className="text-xs text-gray-500">
+                                  Jurnal: {stats.totalJurnal} total • {stats.jurnalBulanIni} bulan ini
+                                </div>
+                                <div className={`text-xs font-medium ${activityStatus.color}`}>
+                                  {activityStatus.text} • {formatDate(stats.lastEntry)}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">
-                            Total: {stats.totalJurnal}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            Bulan ini: {stats.jurnalBulanIni}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div
-                            className={`text-sm font-medium ${activityStatus.color}`}
-                          >
-                            {activityStatus.text}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            Terakhir: {formatDate(stats.lastEntry)}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          <Link
-                            href={`/guru/siswa/${siswa.nisn}`}
-                            className="text-indigo-600 hover:text-indigo-900 flex items-center"
-                          >
-                            <Eye className="h-4 w-4 mr-1" />
-                            Detail
-                          </Link>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                          </td>
+                          <td className="px-3 sm:px-6 py-4 whitespace-nowrap hidden md:table-cell">
+                            <div className="flex items-center">
+                              <Building2 className="h-4 w-4 text-gray-400 mr-2 flex-shrink-0" />
+                              <div className="min-w-0 flex-1">
+                                <div className="text-sm text-gray-900 truncate">
+                                  {siswa.nama_dudi}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-3 sm:px-6 py-4 whitespace-nowrap hidden lg:table-cell">
+                            <div className="text-sm text-gray-900">
+                              Total: {stats.totalJurnal}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              Bulan ini: {stats.jurnalBulanIni}
+                            </div>
+                          </td>
+                          <td className="px-3 sm:px-6 py-4 whitespace-nowrap hidden lg:table-cell">
+                            <div
+                              className={`text-sm font-medium ${activityStatus.color}`}
+                            >
+                              {activityStatus.text}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              Terakhir: {formatDate(stats.lastEntry)}
+                            </div>
+                          </td>
+                          <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-right">
+                            <Link
+                              href={`/guru/siswa/${siswa.nisn}`}
+                              className="inline-flex items-center justify-center w-8 h-8 text-indigo-600 hover:text-indigo-900 hover:bg-indigo-50 rounded-full transition-colors duration-200"
+                              title="Lihat Detail"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Link>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
 
               {filteredSiswa.length === 0 && (
                 <div className="text-center py-12">

@@ -17,7 +17,7 @@ import {
   showWarning, 
   showInfo, 
   showConfirmation 
-} from "@/lib/sweetAlert";
+} from "@/lib/customAlert";
 
 interface ImportResult {
   success: boolean;

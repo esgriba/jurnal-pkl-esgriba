@@ -18,7 +18,7 @@ import {
   School,
 } from "lucide-react";
 import Link from "next/link";
-import { showError, showSuccess, showWarning } from "@/lib/sweetAlert";
+import { showError, showSuccess, showWarning } from "@/lib/customAlert";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);

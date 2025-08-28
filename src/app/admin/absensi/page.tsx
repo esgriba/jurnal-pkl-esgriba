@@ -23,7 +23,7 @@ import {
   showSuccess,
   showError,
   showInfo,
-} from "@/lib/sweetAlert";
+} from "@/lib/customAlert";
 import LocationLink, { LocationBadge } from "@/components/ui/LocationLink";
 
 interface Absensi {

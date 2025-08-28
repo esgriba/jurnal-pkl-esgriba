@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useToast } from "@/components/ui/Toast";
-import { showConfirmation, showSuccess, showError } from "@/lib/sweetAlert";
+import { showConfirmation, showSuccess, showError } from "@/lib/customAlert";
 
 interface User {
   id: number;

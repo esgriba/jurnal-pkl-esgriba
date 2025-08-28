@@ -16,7 +16,7 @@ import {
   Download,
 } from "lucide-react";
 import Link from "next/link";
-import { showConfirmation, showSuccess, showError } from "@/lib/sweetAlert";
+import { showConfirmation, showSuccess, showError } from "@/lib/customAlert";
 
 interface Jurnal {
   id_jurnal: string;

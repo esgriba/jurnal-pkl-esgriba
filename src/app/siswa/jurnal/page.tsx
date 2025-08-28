@@ -189,9 +189,7 @@ export default function JurnalListPage() {
           <div className="relative px-6 py-8 sm:px-8">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl lg:text-4xl font-bold mb-2">
-                  Jurnal PKL 📚
-                </h1>
+                
                 <p className="text-blue-100 text-lg">
                   {filteredJournals.length}{" "}
                   {filteredJournals.length === 1 ? "jurnal" : "jurnal"}
@@ -207,7 +205,7 @@ export default function JurnalListPage() {
                       : "bg-white/20 text-blue-500 hover:bg-white/30 backdrop-blur-sm"
                   }`}
                 >
-                  <Filter className="h-5 w-5" />
+                  <Filter className="h-5 w-5" />Filter
                 </button>
                 <Link
                   href="/siswa/jurnal/create"
@@ -369,31 +367,10 @@ export default function JurnalListPage() {
                             </span>
                           )}
                         </div>
-                        <h3 className="text-lg font-bold text-gray-900 dark:text-gray-900 mb-2 line-clamp-2">
+                        <p className="text-gray-900 dark:text-gray-900 mb-2 line-clamp-2">
                           {journal.deskripsi_kegiatan}
-                        </h3>
-                        <div className="space-y-2">
-                          {journal.evadir_personal && (
-                            <div className="text-sm text-gray-600 dark:text-gray-600">
-                              <span className="font-bold">
-                                Evaluasi Personal:
-                              </span>{" "}
-                              <span className="text-gray-800 dark:text-gray-800">
-                                {journal.evadir_personal}
-                              </span>
-                            </div>
-                          )}
-                          {journal.evadir_sosial && (
-                            <div className="text-sm text-gray-600 dark:text-gray-600">
-                              <span className="font-bold">
-                                Evaluasi Sosial:
-                              </span>{" "}
-                              <span className="text-gray-800 dark:text-gray-800">
-                                {journal.evadir_sosial}
-                              </span>
-                            </div>
-                          )}
-                        </div>
+                        </p>
+          
                       </div>
                       <div className="ml-6 flex-shrink-0">
                         <Link

@@ -124,7 +124,7 @@ html, body {
   background-color: #ffffff !important; /* white */
 }
 
-/* Dark mode overrides - disable dark mode completely */
+/* Dark mode overrides - COMMENTED OUT to allow proper dark mode
 @media (prefers-color-scheme: dark) {
   * {
     background-color: unset !important;
@@ -132,16 +132,16 @@ html, body {
   }
   
   html, body {
-    background-color: #f8fafc !important; /* slate-50 */
-    color: #1e293b !important; /* slate-800 */
+    background-color: #f8fafc !important;
+    color: #1e293b !important;
   }
   
-  /* Force light theme for cards */
   [class*="dark:bg-"], [class*="dark:text-"] {
     background-color: #ffffff !important;
     color: #1e293b !important;
   }
 }
+*/
 
 /* Form input styling - ensure text is always visible */
 input[type="text"],
@@ -276,23 +276,47 @@ textarea::placeholder {
   transform: translateY(0) !important;
 }
 
-/* Mobile specific styles */
+/* Mobile specific styles - Enhanced for light mode */
 @media (max-width: 768px) {
+  /* Ensure container is properly sized */
+  .swal2-container {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    padding: 0 !important;
+    z-index: 1060 !important;
+  }
+
   .swal2-popup {
-    width: 90% !important;
-    margin: 0 auto !important;
+    width: 85% !important; /* Slightly smaller width */
+    max-width: 400px !important; /* Maximum width constraint */
+    margin: 0 !important;
     padding: 16px !important;
     font-size: 14px !important;
+    background: #ffffff !important; /* Force white background */
+    color: #1f2937 !important; /* Force dark text */
+    border: 1px solid #e5e7eb !important; /* Light border */
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important; /* Perfect centering */
+    z-index: 9999 !important;
+    max-height: 80vh !important; /* Prevent overflow on small screens */
+    overflow-y: auto !important; /* Allow scrolling if content is too tall */
   }
   
   .swal2-title {
     font-size: 16px !important;
     margin-bottom: 8px !important;
+    color: #1f2937 !important; /* Force dark text */
   }
   
   .swal2-html-container {
     font-size: 13px !important;
     margin: 8px 0 12px 0 !important;
+    color: #374151 !important; /* Force readable text */
   }
   
   .swal2-actions {
@@ -314,47 +338,90 @@ textarea::placeholder {
   
   /* Toast specific mobile styles */
   .swal2-toast {
-    width: 90% !important;
-    margin: 10px auto !important;
+    width: 85% !important; /* Slightly smaller to ensure it fits */
+    max-width: 400px !important; /* Maximum width constraint */
+    margin: 0 !important;
     position: fixed !important;
-    top: 20px !important;
+    top: 20px !important; /* Safe distance from top */
     left: 50% !important;
     transform: translateX(-50%) !important;
+    background: #ffffff !important; /* Force white background */
+    color: #1f2937 !important; /* Force dark text */
+    border: 1px solid #e5e7eb !important; /* Light border */
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+    z-index: 9999 !important; /* Ensure it's above other elements */
+  }
+
+  /* Special animation for toasts */
+  .swal2-toast.swal2-show {
+    animation: toast-slide-down 0.3s ease-out !important;
+  }
+
+  .swal2-toast.swal2-hide {
+    animation: toast-slide-up 0.2s ease-in !important;
+  }
+
+  @keyframes toast-slide-down {
+    0% {
+      transform: translateX(-50%) translateY(-100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes toast-slide-up {
+    0% {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(-50%) translateY(-100%);
+      opacity: 0;
+    }
   }
 }
 
-/* Dark mode overrides for SweetAlert */
-@media (prefers-color-scheme: dark) {
-  .swal2-popup {
-    background: #1f2937 !important;
-    color: #f9fafb !important;
-    border: 1px solid #374151 !important;
-  }
-  
-  .swal2-title {
-    color: #f9fafb !important;
-  }
-  
-  .swal2-html-container {
-    color: #e5e7eb !important;
-  }
-  
-  .swal2-input {
-    background: #374151 !important;
-    border: 1px solid #4b5563 !important;
-    color: #f9fafb !important;
-  }
-  
-  .swal2-input:focus {
-    border-color: #3b82f6 !important;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
-  }
-  
-  /* Loading spinner color in dark mode */
-  .swal2-loader {
-    border-color: #3b82f6 transparent #3b82f6 transparent !important;
-  }
+/* Force light mode for all SweetAlert elements */
+.swal2-popup {
+  background: #ffffff !important;
+  color: #1f2937 !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+/* Ensure backdrop doesn't interfere */
+.swal2-backdrop {
+  background: rgba(0, 0, 0, 0.4) !important;
+}
+
+.swal2-container {
+  z-index: 1060 !important;
+}
+
+.swal2-title {
+  color: #1f2937 !important;
+}
+
+.swal2-html-container {
+  color: #374151 !important;
+}
+
+.swal2-input {
+  background: #ffffff !important;
+  border: 1px solid #d1d5db !important;
+  color: #1f2937 !important;
+}
+
+.swal2-input:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
+/* Loading spinner color */
+.swal2-loader {
+  border-color: #3b82f6 transparent #3b82f6 transparent !important;
 }
 
 /* Enhanced animations */
@@ -366,6 +433,7 @@ textarea::placeholder {
   animation: swal2-hide 0.15s ease-in !important;
 }
 
+/* Desktop animations */
 @keyframes swal2-show {
   0% {
     transform: scale(0.7) translateY(20px);
@@ -396,13 +464,104 @@ textarea::placeholder {
   }
 }
 
-/* Progress bar styling */
-.swal2-timer-progress-bar {
-  background: rgba(0, 0, 0, 0.2) !important;
+/* Mobile-specific animations - safer transforms */
+@media (max-width: 768px) {
+  .swal2-show {
+    animation: swal2-show-mobile 0.3s ease-out !important;
+  }
+
+  .swal2-hide {
+    animation: swal2-hide-mobile 0.15s ease-in !important;
+  }
+
+  @keyframes swal2-show-mobile {
+    0% {
+      transform: translate(-50%, -50%) scale(0.9);
+      opacity: 0;
+    }
+    50% {
+      transform: translate(-50%, -50%) scale(1.02);
+      opacity: 0.8;
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes swal2-hide-mobile {
+    0% {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(0.8);
+      opacity: 0;
+    }
+  }
 }
 
-@media (prefers-color-scheme: dark) {
-  .swal2-timer-progress-bar {
-    background: rgba(255, 255, 255, 0.2) !important;
+/* Progress bar styling - Force light theme */
+.swal2-timer-progress-bar {
+  background: rgba(59, 130, 246, 0.8) !important; /* Blue progress bar for better visibility */
+}
+
+/* Custom Alert System Animations */
+@keyframes alert-show {
+  0% {
+    opacity: 0;
+    transform: scale(0.9) translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes toast-slide-in {
+  0% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes toast-slide-down {
+  0% {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-alert-show {
+  animation: alert-show 0.3s ease-out;
+}
+
+.animate-toast-slide-in {
+  animation: toast-slide-in 0.3s ease-out;
+}
+
+.animate-toast-slide-down {
+  animation: toast-slide-down 0.3s ease-out;
+}
+
+/* Mobile-specific adjustments for alerts */
+@media (max-width: 768px) {
+  @keyframes alert-show {
+    0% {
+      opacity: 0;
+      transform: scale(0.95) translateY(-5px);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
   }
 }

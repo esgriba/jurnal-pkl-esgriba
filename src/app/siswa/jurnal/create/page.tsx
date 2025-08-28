@@ -20,7 +20,7 @@ import {
   Edit3,
 } from "lucide-react";
 import Link from "next/link";
-import { showSuccess, showError } from "@/lib/sweetAlert";
+import { showSuccess, showError } from "@/lib/customAlert";
 
 interface UserData {
   id: number;

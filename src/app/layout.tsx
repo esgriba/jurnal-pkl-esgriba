@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ToastProvider } from "@/components/ui/Toast";
+import { AlertProvider } from "@/components/ui/Alert";
+import { AlertInitializer } from "@/components/ui/AlertInitializer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,7 +45,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ToastProvider>{children}</ToastProvider>
+        <AlertProvider>
+          <AlertInitializer />
+          <ToastProvider>{children}</ToastProvider>
+        </AlertProvider>
       </body>
     </html>
   );
