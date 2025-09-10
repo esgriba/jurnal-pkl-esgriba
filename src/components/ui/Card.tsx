@@ -51,9 +51,7 @@ interface CardTitleProps {
 
 export function CardTitle({ children, className = "" }: CardTitleProps) {
   return (
-    <h3
-      className={`text-lg font-semibold text-slate-800 ${className}`}
-    >
+    <h3 className={`text-lg font-semibold text-slate-800 ${className}`}>
       {children}
     </h3>
   );
@@ -65,17 +63,14 @@ interface CardContentProps {
 }
 
 export function CardContent({ children, className = "" }: CardContentProps) {
-  return (
-    <div className={`text-slate-600 ${className}`}>
-      {children}
-    </div>
-  );
+  return <div className={`text-slate-600 ${className}`}>{children}</div>;
 }
 
 interface StatCardProps {
   title: string;
   value: string | number;
   icon: React.ReactNode;
+  subtitle?: string;
   trend?: {
     value: number;
     isPositive: boolean;
@@ -87,6 +82,7 @@ export function StatCard({
   title,
   value,
   icon,
+  subtitle,
   trend,
   color = "blue",
 }: StatCardProps) {
@@ -103,12 +99,11 @@ export function StatCard({
     <Card className="hover:shadow-lg transition-shadow duration-200">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-medium text-slate-600">
-            {title}
-          </p>
-          <p className="text-2xl font-bold text-slate-900">
-            {value}
-          </p>
+          <p className="text-sm font-medium text-slate-600">{title}</p>
+          {subtitle && (
+            <p className="text-xs text-slate-500 mb-1">{subtitle}</p>
+          )}
+          <p className="text-2xl font-bold text-slate-900">{value}</p>
           {trend && (
             <p
               className={`text-xs ${

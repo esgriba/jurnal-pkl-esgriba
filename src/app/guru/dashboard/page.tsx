@@ -65,6 +65,7 @@ export default function GuruDashboard() {
   const [siswaList, setSiswaList] = useState<SiswaData[]>([]);
   const [recentJournals, setRecentJournals] = useState<JurnalData[]>([]);
   const [todayAttendance, setTodayAttendance] = useState<AttendanceData[]>([]);
+  const [isLoadingData, setIsLoadingData] = useState(false);
   const [stats, setStats] = useState({
     totalSiswa: 0,
     totalJurnal: 0,
@@ -94,6 +95,8 @@ export default function GuruDashboard() {
 
   const fetchData = async (username: string) => {
     try {
+      setIsLoadingData(true);
+
       // Fetch siswa yang dibimbing
       const { data: siswaData, error: siswaError } = await supabase
         .from("tb_siswa")
@@ -103,32 +106,11 @@ export default function GuruDashboard() {
       if (siswaError) throw siswaError;
       setSiswaList(siswaData || []);
 
-      // Fetch jurnal terbaru
+      // Fetch jurnal hari ini saja
       if (siswaData && siswaData.length > 0) {
         const nisnList = siswaData.map((s) => s.nisn);
-        const { data: jurnalData, error: jurnalError } = await supabase
-          .from("tb_jurnal")
-          .select("*")
-          .in("nisn", nisnList)
-          .order("tanggal", { ascending: false })
-          .limit(5);
 
-        if (jurnalError) throw jurnalError;
-
-        // Add nama_siswa to jurnal data
-        const formattedJurnal =
-          jurnalData?.map((j) => {
-            const siswa = siswaData.find((s) => s.nisn === j.nisn);
-            return {
-              ...j,
-              nama_siswa: siswa?.nama_siswa || "",
-            };
-          }) || [];
-
-        setRecentJournals(formattedJurnal);
-
-        // Fetch today's attendance data
-        // Use Jakarta timezone consistently like in absensi page
+        // Get today's date in Jakarta timezone
         const today = new Date();
         const jakartaDate = new Intl.DateTimeFormat("en-CA", {
           timeZone: "Asia/Jakarta",
@@ -144,6 +126,29 @@ export default function GuruDashboard() {
           today.toISOString()
         );
 
+        // Fetch only today's journals
+        const { data: jurnalData, error: jurnalError } = await supabase
+          .from("tb_jurnal")
+          .select("*")
+          .in("nisn", nisnList)
+          .eq("tanggal", jakartaDate)
+          .order("created_at", { ascending: false });
+
+        if (jurnalError) throw jurnalError;
+
+        // Add nama_siswa to jurnal data
+        const formattedJurnal =
+          jurnalData?.map((j) => {
+            const siswa = siswaData.find((s) => s.nisn === j.nisn);
+            return {
+              ...j,
+              nama_siswa: siswa?.nama_siswa || "",
+            };
+          }) || [];
+
+        setRecentJournals(formattedJurnal);
+
+        // Fetch today's attendance data using the same jakartaDate
         const { data: attendanceData, error: attendanceError } = await supabase
           .from("tb_absensi")
           .select("*")
@@ -156,9 +161,22 @@ export default function GuruDashboard() {
           setTodayAttendance(attendanceData || []);
         }
 
-        // Calculate stats
-        const todayJournals =
-          jurnalData?.filter((j) => j.tanggal === jakartaDate) || [];
+        // Calculate stats - jurnal hari ini saja
+        const todayJournals = jurnalData || [];
+
+        // Debug logging for troubleshooting
+        console.log("Dashboard calculation debug:", {
+          teacherUsername: user?.username || "unknown",
+          teacherName: user?.nama || "unknown",
+          totalStudents: siswaData.length,
+          todayDate: jakartaDate,
+          journalsToday: todayJournals.length,
+          todayJournalDetails: todayJournals.map((j) => ({
+            student: j.nama_siswa,
+            nisn: j.nisn,
+            date: j.tanggal,
+          })),
+        });
 
         const hadirCount =
           attendanceData?.filter((a) => a.status === "Hadir").length || 0;
@@ -167,7 +185,7 @@ export default function GuruDashboard() {
 
         setStats({
           totalSiswa: siswaData.length,
-          totalJurnal: jurnalData?.length || 0,
+          totalJurnal: 0, // Tidak digunakan lagi
           jurnalHariIni: todayJournals.length,
           hadirHariIni: hadirCount,
           belumAbsen: belumAbsenCount,
@@ -175,6 +193,8 @@ export default function GuruDashboard() {
       }
     } catch (error) {
       console.error("Error fetching data:", error);
+    } finally {
+      setIsLoadingData(false);
     }
   };
 
@@ -209,42 +229,64 @@ export default function GuruDashboard() {
       </Card>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <StatCard
           title="Total Siswa"
-          value={stats.totalSiswa}
+          value={isLoadingData ? "..." : stats.totalSiswa}
           icon={<Users className="h-6 w-6" />}
           color="blue"
         />
 
         <StatCard
           title="Hadir Hari Ini"
-          value={stats.hadirHariIni}
+          value={isLoadingData ? "..." : stats.hadirHariIni}
           icon={<CheckCircle className="h-6 w-6" />}
           color="green"
         />
 
         <StatCard
           title="Belum Absen"
-          value={stats.belumAbsen}
+          value={isLoadingData ? "..." : stats.belumAbsen}
           icon={<UserX className="h-6 w-6" />}
           color="red"
         />
 
         <StatCard
-          title="Total Jurnal"
-          value={stats.totalJurnal}
-          icon={<BookOpen className="h-6 w-6" />}
-          color="purple"
-        />
-
-        <StatCard
           title="Jurnal Hari Ini"
-          value={stats.jurnalHariIni}
+          value={isLoadingData ? "..." : stats.jurnalHariIni}
           icon={<Calendar className="h-6 w-6" />}
           color="yellow"
+          subtitle="dari siswa bimbingan Anda"
         />
       </div>
+
+      {/* Info note */}
+      {!isLoadingData && (
+        <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="flex items-start">
+            <div className="flex-shrink-0">
+              <svg
+                className="h-5 w-5 text-blue-400"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <p className="text-sm text-blue-700">
+                <strong>Catatan:</strong> Dashboard ini menampilkan data hari
+                ini saja dari siswa yang Anda bimbing. Statistik jurnal merujuk
+                pada jurnal yang dibuat hari ini oleh siswa bimbingan Anda.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
@@ -334,11 +376,18 @@ export default function GuruDashboard() {
           </CardContent>
         </Card>
 
-        {/* Recent Journals */}
+        {/* Today's Journals */}
         <Card className="mb-3">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle>Jurnal Terbaru</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Calendar className="h-5 w-5" />
+                Jurnal Hari Ini (
+                {new Date().toLocaleDateString("id-ID", {
+                  timeZone: "Asia/Jakarta",
+                })}
+                )
+              </CardTitle>
               <Button href="/guru/jurnal" variant="outline" size="sm">
                 Lihat Semua
               </Button>
@@ -346,13 +395,15 @@ export default function GuruDashboard() {
           </CardHeader>
           <CardContent>
             {recentJournals.length === 0 ? (
-              <p className="text-gray-500 text-center py-4">Belum ada jurnal</p>
+              <p className="text-gray-500 text-center py-4">
+                Belum ada jurnal hari ini
+              </p>
             ) : (
               <div className="space-y-4">
                 {recentJournals.map((journal) => (
                   <div
                     key={journal.id_jurnal}
-                    className="border-l-4 border-blue-500 pl-4"
+                    className="border-l-4 border-green-500 pl-4"
                   >
                     <div className="flex items-center justify-between">
                       <div>
