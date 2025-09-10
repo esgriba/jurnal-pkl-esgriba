@@ -211,7 +211,6 @@ export default function AdminDashboardPage() {
         .order("nama_guru", { ascending: true });
 
       if (error) throw error;
-      console.log("🧑‍🏫 Fetched guru list:", guruData);
       setGuruList(guruData || []);
     } catch (error) {
       console.error("Error fetching guru list:", error);
@@ -257,13 +256,6 @@ export default function AdminDashboardPage() {
         .order("nama_siswa", { ascending: true });
 
       if (error) throw error;
-      console.log("👨‍🎓 Fetched all students:", siswaData?.length, "students");
-      console.log(
-        "📋 Nunung Indrawati's students:",
-        siswaData?.filter((s) =>
-          s.nama_guru?.toLowerCase().includes("nunung indrawati")
-        )
-      );
       setAllSiswa(siswaData || []);
     } catch (error) {
       console.error("Error fetching all students:", error);
@@ -299,37 +291,6 @@ export default function AdminDashboardPage() {
     if (selectedGuru === "all") return true;
     return siswa.nama_guru.toLowerCase() === selectedGuru.toLowerCase();
   });
-
-  // Debug logging for Nunung Indrawati
-  useEffect(() => {
-    if (selectedGuru.toLowerCase().includes("nunung")) {
-      console.log("🔍 Debug for Nunung Indrawati:");
-      console.log("Selected guru:", selectedGuru);
-      console.log("Today attendance (all):", todayAttendance.length);
-      console.log("Today attendance (filtered):", filteredAttendance.length);
-      console.log("All students (all):", allSiswa.length);
-      console.log("Students not present (all):", studentsNotPresent.length);
-      console.log(
-        "Students not present (filtered):",
-        filteredStudentsNotPresent.length
-      );
-      
-      // Show attendance data with guru names for comparison
-      const nunungAttendance = todayAttendance.filter(a => 
-        a.nama_guru.toLowerCase().includes('nunung')
-      );
-      console.log("All Nunung attendance (case-insensitive):", nunungAttendance);
-      
-      // Show student data with guru names for comparison
-      const nunungStudents = allSiswa.filter(s => 
-        s.nama_guru.toLowerCase().includes('nunung')
-      );
-      console.log("All Nunung students (case-insensitive):", nunungStudents);
-      
-      console.log("Filtered attendance data:", filteredAttendance);
-      console.log("Filtered not present data:", filteredStudentsNotPresent);
-    }
-  }, [selectedGuru, filteredAttendance, filteredStudentsNotPresent]);
 
   // Calculate attendance stats
   const attendanceStats = {
