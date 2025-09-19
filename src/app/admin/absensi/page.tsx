@@ -16,6 +16,9 @@ import {
   XCircle,
   AlertCircle,
   Clock,
+  Edit,
+  Save,
+  X,
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -51,6 +54,10 @@ export default function AdminAbsensiPage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState("");
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [editingStatus, setEditingStatus] = useState<number | null>(null);
+  const [editingKeterangan, setEditingKeterangan] = useState<{
+    [key: number]: string;
+  }>({});
   const router = useRouter();
   const supabase = createClient();
 
@@ -172,6 +179,82 @@ export default function AdminAbsensiPage() {
     } catch (error) {
       console.error("Error deleting absensi:", error);
       showError("Gagal Menghapus", "Error menghapus data absensi");
+    }
+  };
+
+  const updateStatus = async (
+    idAbsensi: number,
+    newStatus: string,
+    keterangan?: string
+  ) => {
+    try {
+      const response = await fetch("/api/absensi/update-status", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id_absensi: idAbsensi,
+          status: newStatus,
+          keterangan: keterangan || null,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        // Update local state
+        setAbsensi((prev) =>
+          prev.map((item) =>
+            item.id_absensi === idAbsensi
+              ? { ...item, status: newStatus, keterangan: keterangan || "" }
+              : item
+          )
+        );
+
+        // Clear editing state
+        setEditingStatus(null);
+        setEditingKeterangan((prev) => {
+          const updated = { ...prev };
+          delete updated[idAbsensi];
+          return updated;
+        });
+
+        showSuccess(
+          "Status Berhasil Diupdate",
+          `Status absensi berhasil diubah menjadi ${newStatus}`
+        );
+      } else {
+        throw new Error(result.error || "Gagal mengupdate status");
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
+      showError(
+        "Gagal Update Status",
+        "Terjadi error saat mengupdate status absensi"
+      );
+    }
+  };
+
+  const handleStatusChange = (idAbsensi: number, newStatus: string) => {
+    const currentAbsensi = absensi.find((a) => a.id_absensi === idAbsensi);
+    const keterangan =
+      editingKeterangan[idAbsensi] || currentAbsensi?.keterangan || "";
+    updateStatus(idAbsensi, newStatus, keterangan);
+  };
+
+  const handleKeteranganChange = (idAbsensi: number, keterangan: string) => {
+    setEditingKeterangan((prev) => ({
+      ...prev,
+      [idAbsensi]: keterangan,
+    }));
+  };
+
+  const saveKeterangan = (idAbsensi: number) => {
+    const currentAbsensi = absensi.find((a) => a.id_absensi === idAbsensi);
+    if (currentAbsensi) {
+      const keterangan = editingKeterangan[idAbsensi] || "";
+      updateStatus(idAbsensi, currentAbsensi.status, keterangan);
     }
   };
 
@@ -357,7 +440,6 @@ export default function AdminAbsensiPage() {
                     second: "2-digit",
                   })}
                 </div>
-          
               </div>
             </div>
           </div>
@@ -416,13 +498,13 @@ export default function AdminAbsensiPage() {
                     onClick={handleAutoAlpha}
                     disabled={isLoading}
                     className={`inline-flex items-center px-4 py-2 border text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-                      getWIBTime().getHours() >= 15
+                      getWIBTime().getHours() >= 12
                         ? "border-orange-300 text-orange-700 bg-orange-50 hover:bg-orange-100 focus:ring-orange-500"
                         : "border-gray-300 text-gray-500 bg-gray-50 cursor-not-allowed"
                     } ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
                     title={
-                      getWIBTime().getHours() < 15
-                        ? `Auto Alpha akan aktif pada jam 15:00 WIB. Sekarang jam ${getWIBTime().getHours()}:${String(
+                      getWIBTime().getHours() < 12
+                        ? `Auto Alpha akan aktif pada jam 12:00 WIB. Sekarang jam ${getWIBTime().getHours()}:${String(
                             getWIBTime().getMinutes()
                           ).padStart(2, "0")} WIB`
                         : "Klik untuk menjalankan Auto Alpha"
@@ -432,9 +514,9 @@ export default function AdminAbsensiPage() {
                     {isLoading
                       ? "Memproses..."
                       : `Auto Alpha ${
-                          getWIBTime().getHours() >= 15
+                          getWIBTime().getHours() >= 12
                             ? "(Aktif)"
-                            : "(Nonaktif sampai 15:00)"
+                            : "(Nonaktif sampai 12:00)"
                         }`}
                   </button>
 
@@ -564,19 +646,94 @@ export default function AdminAbsensiPage() {
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <span
-                              className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full ${getStatusBadgeColor(
-                                a.status
-                              )}`}
-                            >
-                              {getStatusIcon(a.status)}
-                              <span className="ml-1">{a.status}</span>
-                            </span>
-                            {a.keterangan && (
-                              <div className="text-xs text-gray-500 mt-1">
-                                {a.keterangan}
+                            <div className="space-y-2">
+                              {/* Status */}
+                              <div className="flex items-center space-x-2">
+                                <select
+                                  value={a.status}
+                                  onChange={(e) =>
+                                    handleStatusChange(
+                                      a.id_absensi,
+                                      e.target.value
+                                    )
+                                  }
+                                  className={`text-xs font-medium rounded-full px-2 py-1 border-0 focus:ring-2 focus:ring-indigo-500 ${getStatusBadgeColor(
+                                    a.status
+                                  )}`}
+                                >
+                                  <option value="Hadir">✓ Hadir</option>
+                                  <option value="Sakit">🤒 Sakit</option>
+                                  <option value="Izin">📋 Izin</option>
+                                  <option value="Alpha">❌ Alpha</option>
+                                </select>
                               </div>
-                            )}
+
+                              {/* Keterangan */}
+                              <div className="flex items-center space-x-1">
+                                {editingStatus === a.id_absensi ? (
+                                  <>
+                                    <input
+                                      type="text"
+                                      value={
+                                        editingKeterangan[a.id_absensi] ||
+                                        a.keterangan ||
+                                        ""
+                                      }
+                                      onChange={(e) =>
+                                        handleKeteranganChange(
+                                          a.id_absensi,
+                                          e.target.value
+                                        )
+                                      }
+                                      placeholder="Keterangan..."
+                                      className="text-xs border border-gray-300 rounded px-2 py-1 w-full focus:ring-1 focus:ring-indigo-500"
+                                    />
+                                    <button
+                                      onClick={() =>
+                                        saveKeterangan(a.id_absensi)
+                                      }
+                                      className="text-green-600 hover:text-green-800 p-1"
+                                      title="Simpan"
+                                    >
+                                      <Save className="h-3 w-3" />
+                                    </button>
+                                    <button
+                                      onClick={() => {
+                                        setEditingStatus(null);
+                                        setEditingKeterangan((prev) => {
+                                          const updated = { ...prev };
+                                          delete updated[a.id_absensi];
+                                          return updated;
+                                        });
+                                      }}
+                                      className="text-gray-600 hover:text-gray-800 p-1"
+                                      title="Batal"
+                                    >
+                                      <X className="h-3 w-3" />
+                                    </button>
+                                  </>
+                                ) : (
+                                  <>
+                                    <span className="text-xs text-gray-500 flex-1">
+                                      {a.keterangan || "Tidak ada keterangan"}
+                                    </span>
+                                    <button
+                                      onClick={() => {
+                                        setEditingStatus(a.id_absensi);
+                                        setEditingKeterangan((prev) => ({
+                                          ...prev,
+                                          [a.id_absensi]: a.keterangan || "",
+                                        }));
+                                      }}
+                                      className="text-blue-600 hover:text-blue-800 p-1"
+                                      title="Edit keterangan"
+                                    >
+                                      <Edit className="h-3 w-3" />
+                                    </button>
+                                  </>
+                                )}
+                              </div>
+                            </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <LocationLink
