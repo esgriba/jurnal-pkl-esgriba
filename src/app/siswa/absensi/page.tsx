@@ -102,11 +102,20 @@ interface AbsensiData {
   created_at: string;
 }
 
+interface AbsensiHistory {
+  id_absensi: number;
+  tanggal: string;
+  status: string;
+  jam_absensi: string | null;
+}
+
 export default function AbsensiPage() {
   const [user, setUser] = useState<UserData | null>(null);
   const [siswaData, setSiswaData] = useState<SiswaData | null>(null);
   const [todayAbsensi, setTodayAbsensi] = useState<AbsensiData | null>(null);
+  const [absensiHistory, setAbsensiHistory] = useState<AbsensiHistory[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [location, setLocation] = useState<string>("");
@@ -245,6 +254,7 @@ export default function AbsensiPage() {
     if (siswaData) {
       setTodayAbsensi(null); // Clear existing state first
       checkTodayAbsensi();
+      fetchAbsensiHistory();
       getCurrentLocation();
     }
   }, [siswaData]);
@@ -354,6 +364,29 @@ export default function AbsensiPage() {
     } catch (error) {
       console.error("Unexpected error in fetchSiswaData:", error);
       setIsLoading(false);
+    }
+  };
+
+  const fetchAbsensiHistory = async () => {
+    if (!siswaData) return;
+
+    try {
+      setIsLoadingHistory(true);
+      const { data, error } = await supabase
+        .from("tb_absensi")
+        .select("id_absensi, tanggal, status, jam_absensi")
+        .eq("nisn", siswaData.nisn)
+        .order("tanggal", { ascending: false })
+        .limit(10);
+
+      if (error) throw error;
+
+      setAbsensiHistory(data || []);
+    } catch (error) {
+      console.error("Error fetching absensi history:", error);
+      setAbsensiHistory([]);
+    } finally {
+      setIsLoadingHistory(false);
     }
   };
 
@@ -777,6 +810,9 @@ export default function AbsensiPage() {
       }
 
       setTodayAbsensi(data);
+
+      // Refresh attendance history
+      fetchAbsensiHistory();
 
       // Simple success feedback (you can replace with your preferred notification method)
       showSuccess(
@@ -1253,7 +1289,7 @@ export default function AbsensiPage() {
         )}
 
         {/* Info Section */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+        <div className="mb-6 bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
           <div className="bg-gradient-to-r from-blue-500 to-indigo-600 px-6 py-4">
             <h3 className="text-lg font-semibold text-white">
               Informasi Absensi
@@ -1304,6 +1340,95 @@ export default function AbsensiPage() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* History Absensi Section */}
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+          <div className="bg-gradient-to-r from-purple-500 to-pink-600 px-6 py-4">
+            <h3 className="text-lg font-semibold text-white">
+              📜 Riwayat Absensi
+            </h3>
+          </div>
+          <div className="p-6">
+            {isLoadingHistory ? (
+              <div className="text-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-4 border-purple-500 border-t-transparent mx-auto mb-3"></div>
+                <p className="text-gray-600">Memuat riwayat absensi...</p>
+              </div>
+            ) : absensiHistory.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="bg-gray-100 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                  <AlertCircle className="h-8 w-8 text-gray-400" />
+                </div>
+                <p className="text-gray-600 font-medium">Belum ada riwayat absensi</p>
+                <p className="text-gray-500 text-sm mt-2">
+                  Data absensi akan muncul setelah Anda melakukan absensi
+                </p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gradient-to-r from-purple-50 to-pink-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-bold text-purple-900 uppercase tracking-wider">
+                        No
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-bold text-purple-900 uppercase tracking-wider">
+                        Tanggal
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-bold text-purple-900 uppercase tracking-wider">
+                        Jam
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-bold text-purple-900 uppercase tracking-wider">
+                        Status Kehadiran
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {absensiHistory.map((absensi, index) => (
+                      <tr
+                        key={absensi.id_absensi}
+                        className="hover:bg-purple-50 transition-colors"
+                      >
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          {index + 1}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                          {new Date(absensi.tanggal).toLocaleDateString("id-ID", {
+                            weekday: "long",
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                          {absensi.jam_absensi || "-"}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span
+                            className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(
+                              absensi.status
+                            )}`}
+                          >
+                            {getStatusIcon(absensi.status)}
+                            <span className="ml-2">{absensi.status}</span>
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                
+                {absensiHistory.length >= 10 && (
+                  <div className="mt-4 text-center">
+                    <p className="text-sm text-gray-500">
+                      Menampilkan 10 data absensi terbaru
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </DashboardLayout>
