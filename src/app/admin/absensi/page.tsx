@@ -52,7 +52,17 @@ export default function AdminAbsensiPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [dateFilter, setDateFilter] = useState("");
+  const [dateFilter, setDateFilter] = useState(() => {
+    // Set default to today's date in Jakarta timezone
+    const today = new Date();
+    const jakartaDate = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Asia/Jakarta",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(today);
+    return jakartaDate;
+  });
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [editingStatus, setEditingStatus] = useState<number | null>(null);
   const [editingKeterangan, setEditingKeterangan] = useState<{
@@ -488,6 +498,7 @@ export default function AdminAbsensiPage() {
                       className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                       value={dateFilter}
                       onChange={(e) => setDateFilter(e.target.value)}
+                      title="Filter tanggal (default: hari ini)"
                     />
                   </div>
                 </div>
@@ -569,18 +580,39 @@ export default function AdminAbsensiPage() {
           <div className="bg-white shadow rounded-lg overflow-hidden">
             <div className="px-4 py-5 sm:p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg leading-6 font-medium text-gray-900">
-                  Data Absensi PKL ({filteredAbsensi.length})
-                </h3>
+                <div>
+                  <h3 className="text-lg leading-6 font-medium text-gray-900">
+                    Data Absensi PKL ({filteredAbsensi.length})
+                  </h3>
+                  {dateFilter && (
+                    <p className="text-sm text-gray-500 mt-1">
+                      Menampilkan data tanggal:{" "}
+                      {new Date(dateFilter).toLocaleDateString("id-ID", {
+                        weekday: "long",
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </p>
+                  )}
+                </div>
                 {(statusFilter !== "all" || dateFilter) && (
                   <button
                     onClick={() => {
                       setStatusFilter("all");
-                      setDateFilter("");
+                      // Reset to today
+                      const today = new Date();
+                      const jakartaDate = new Intl.DateTimeFormat("en-CA", {
+                        timeZone: "Asia/Jakarta",
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                      }).format(today);
+                      setDateFilter(jakartaDate);
                     }}
                     className="text-sm text-indigo-600 hover:text-indigo-800"
                   >
-                    Clear filters
+                    Reset ke hari ini
                   </button>
                 )}
               </div>
@@ -735,7 +767,7 @@ export default function AdminAbsensiPage() {
                               </div>
                             </div>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
+                          <td className="px-6 py-4">
                             <LocationLink
                               locationStr={a.lokasi}
                               showIcon={true}
@@ -743,11 +775,11 @@ export default function AdminAbsensiPage() {
                               className="max-w-xs"
                             />
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm text-gray-900">
+                          <td className="px-4 py-4">
+                            <div className="text-sm text-gray-900 truncate max-w-[120px]" title={a.nama_dudi}>
                               {a.nama_dudi}
                             </div>
-                            <div className="text-sm text-gray-500">
+                            <div className="text-xs text-gray-500 truncate max-w-[120px]" title={a.nama_guru}>
                               {a.nama_guru}
                             </div>
                           </td>
